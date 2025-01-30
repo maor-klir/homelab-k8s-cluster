@@ -13,7 +13,7 @@ spec:
         app: linkding
     spec:
       volumes:
-      - name: dynamic
+      - name: linkding-data
         persistentVolumeClaim:
           claimName: linkding-data-pvc
       containers:
@@ -22,5 +22,5 @@ spec:
           ports:
             - containerPort: 9090
           volumeMounts:
-            - mountPath: /dynamic
-              name: dynamic  
+            - mountPath: /etc/linkding/data
+              name: linkding-data
