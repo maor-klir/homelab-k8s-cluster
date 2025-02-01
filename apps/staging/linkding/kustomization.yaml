@@ -4,3 +4,5 @@ namespace: linkding
 resources:
   - ../../base/linkding/
   - cloudflared.yaml
+  - linkding-tunnel-cred.yaml
+  - superuser-cred.yaml
