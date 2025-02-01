@@ -32,4 +32,4 @@ spec:
               name: linkding-data
           envFrom:
           - secretRef:
-            name: superuser-cred   
+              name: superuser-cred   
