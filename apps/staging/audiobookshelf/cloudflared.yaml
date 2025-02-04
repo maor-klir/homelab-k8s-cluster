@@ -46,7 +46,7 @@ spec:
       volumes:
       - name: creds
         secret:
-          secretName: linkding-tunnel-cred
+          secretName: audiobookshelf-tunnel-cred
 
       # Create a config.yaml file from the ConfigMap below.
       - name: config
@@ -68,7 +68,7 @@ data:
   config.yaml: |
     # Name of the tunnel you want to run
     
-    tunnel: linkding-k8s
+    tunnel: audiobookshelf-k8s
     credentials-file: /etc/cloudflared/creds/credentials.json
 
     # Serves the metrics server under /metrics and the readiness server under /ready
@@ -76,8 +76,8 @@ data:
     no-autoupdate: true
 
     ingress:
-    - hostname: linkding.cloudandklir.com
-      service: http://linkding:9090
+    - hostname: audiobookshelf.cloudandklir.com
+      service: http://audiobookshelf:3005
 
     # This rule sends traffic to the built-in hello-world HTTP server. This can help debug connectivity
     # issues. If hello.example.com resolves and tunnel.example.com does not, then the problem is
