@@ -20,6 +20,7 @@ spec:
       - name: audiobookshelf-data
         persistentVolumeClaim:
           claimName: audiobookshelf-data-pvc
+      restartPolicy: Always
       containers:
         - name: audiobookshelf
           image: ghcr.io/advplyr/audiobookshelf:2.18.0
@@ -27,6 +28,7 @@ spec:
             allowPrivilegeEscalation: false
           ports:
             - containerPort: 3005
+              protocol: TCP
           volumeMounts:
             - name: audiobookshelf-data
               mountPath: /audiobooks
