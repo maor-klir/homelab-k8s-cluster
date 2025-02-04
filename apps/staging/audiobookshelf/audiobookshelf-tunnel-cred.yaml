@@ -1,0 +1,28 @@
+apiVersion: v1
+data:
+    credentials.json: ENC[AES256_GCM,data:hfO4gVN52Y+2Cpfzkm7kD3KZpimdfWHZvOxFYT1XnqdBEZhEWefmnJNgg++BwVtNwZ8f/4fM0cB0QnAZRcLQjP6hYH0BWFb1nyV1zECXGVhEXDJ3LoNyOZc3rytpT7gWsgJiC0AYweb7kNi3zcfqyt9Eco0ZwrpOjtAE9PlQ+t9fC3ZEEt6oQid5kV2rgupBUFesAqNsd/DId6idWZhcTqbKgLO/ed5d2mjhby75IQ5Ut28PkoUWzjPzIrNAaPnhd4DPnfLDQ9xamoig7XYcuN2rocA45XIA,iv:cpCsVYzkg+AZLOQwH7JBMIh4IytuhWevg6pAaBuvEPQ=,tag:9QK7XVkLCDXU4AAQvCpXSQ==,type:str]
+kind: Secret
+metadata:
+    creationTimestamp: null
+    name: audiobookshelf-tunnel-cred
+    namespace: audiobookshelf
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1efeu9sg7e84dq2x0sku52vdvfsmttjazdj390jkrpmr4gd3tg4psldtdsh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArVmxmVit2RmR6a0p0M01r
+            QjFxMmdxQ0cyb2IyZnZ0bkU4eG9GaHA4QnlzCjRTdEJvY2VSZllZNU1qYmNKeGUw
+            OGxlNW5yWGpSb2MzYk1iVVdiN1dnSncKLS0tIHM1ci9OcHhHbDJKRm9wR0h4MEdH
+            NEVWZS9peStyUDJRS2FmUi81b0oxWEEKUIHNL/novi0oaTd4edarBOYLy/p1E6+3
+            2FJNGN9q3asJOKLUdntl9y55zRFJbiH6YoeMgZmI4UYhQ3a8YyHIag==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-02-04T21:34:05Z"
+    mac: ENC[AES256_GCM,data:FBOV7HHPZlNXPBeOnYh5bzpuQmGGP9RxkuxDtyeJX2P79DBf2gW9Ijx06j+Gca2XLrPKQFE+CShx8m/iIF2WPbZgNu6C57DXE+rLu6t9Yr+I7AqTdVe44hhH8IbyAlOrLagkEtgcKrFdMvrMcjAhJMLX9051CoInFsxYNFk/m2Q=,iv:3gUjLUslILOo1OZ0MWqNrz/uVwWN4efsFQ820XEPJSs=,tag:o8SK+yxIY343iJyM4zMlXQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.4
