@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: audiobookshelf-configmap
-  namespace: audiobookshelf
-data:
-  PORT: "3005"
-  TZ: "Europe/Berlin"
-  ALLOW_CORS: "1"
