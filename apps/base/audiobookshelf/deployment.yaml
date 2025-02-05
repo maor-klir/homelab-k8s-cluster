@@ -13,9 +13,9 @@ spec:
         app: audiobookshelf
     spec:
       securityContext:
-        # fsGroup: 33 # www-data GID
-        # runAsUser: 33 # www-data UID
-        # runAsGroup: 33 # www-data GID
+         fsGroup: 1000 # node GID
+         runAsUser: 1000 # node UID
+         runAsGroup: 1000 # node GID
       volumes:
       - name: audiobookshelf-data
         persistentVolumeClaim:
