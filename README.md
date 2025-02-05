@@ -5,6 +5,7 @@
 This GitHub repository contains all the documentation and configuration of my self-hosted Kubernetes homelab.
 The purpose is first and foremost learning how to handle such equivalent environment in production (i.e. being hired to do so for an employer).
 Having that in mind will force one to take into account security, scalability, and backup strategies and adhere to industry best practices when provisioning the cluster and maintaining the running workloads. 
+
 Self-hosting also makes you responsible to take care of the ease of deployment and maintenance over time, in other words - settings up proper automation. That is where the GitOps operational framework kicks in.
 
 - [Homelab](#homelab)
@@ -17,7 +18,8 @@ Self-hosting also makes you responsible to take care of the ease of deployment a
 
 ## GitOps
 
-GitOps is a set of best practices where the entire code delivery process is controlled via a distributed Version Control System (VCS), most commonly Git. It applies to infrastructure and application code alike. It enables full automation that involves rapid updates and rollbacks.
+GitOps is a set of best practices where the entire code delivery process is controlled via a distributed Version Control System (VCS), most commonly Git. 
+It applies to infrastructure and application code alike. It enables full automation that involves rapid updates and rollbacks.
 
 [GitOps Principles](https://opengitops.dev/) as defined by the [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project):
 
@@ -50,6 +52,7 @@ GitOps methodology also highlights:
 ## Selecting a Kubernetes Distribution:
 
 We want to strike a balance, a sweet spot if you will, between being able to easily install and configure settings manually and having the ability to add modular configurable options. Between being able to experiment and on the other hand, easily maintain the cluster in the long term.
+
 On top of that, we want to choose a Kubernetes distribution that is: 
 - Stable and is able of running applications in a persistent manner
 - Not bundled with add-ons. Not a vendor-locked opinionated way of handling extensions (a good example is Canonical's [MicroK8s](https://microk8s.io/))
@@ -59,7 +62,8 @@ My next iteration will include future security hardening of the cluster by trans
 Here is a brief overview of the two aforementioned distributions:
 #### [K3s](https://k3s.io/)
 
-K3s runs as single binary on the Linux operating system. This means it reduces dependencies and steps needed for installation, hence eases its bootstrapping process significantly. It strikes the perfect balance between easy installation and modular configurable options.
+K3s runs as single binary on the Linux operating system. This means it reduces dependencies and steps needed for installation, hence eases its bootstrapping process significantly. 
+It strikes the perfect balance between easy installation and modular configurable options.
 K3s also powers Rancher (by Suse) - an enterprise Kubernetes management platform (can be referred as Kubernetes-as-a-Service).
 With Rancher you can deploy and manage multiple K8s clusters at scale - from datacenter to cloud to edge.
 
