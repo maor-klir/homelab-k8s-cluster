@@ -20,8 +20,8 @@ That is where the GitOps operational framework kicks in and shines.
     - [OpenGitOps](#opengitops)
       - [Key Takeaways:](#key-takeaways)
   - [Selecting a Kubernetes Distribution:](#selecting-a-kubernetes-distribution)
-      - [K3s](#k3s)
-      - [Talos Linux](#talos-linux)
+    - [K3s](#k3s)
+    - [Talos Linux](#talos-linux)
   - [Flux](#flux)
   - [Secrets Management](#secrets-management)
   - [Enable Extrenal Access with Cloudflare Tunnels](#enable-extrenal-access-with-cloudflare-tunnels)
@@ -114,17 +114,17 @@ My next iteration will include security hardening of the cluster by transitionin
 
 Here is a brief overview of the two aforementioned distributions:
 
-#### [K3s](https://k3s.io/)
+### K3s
 
-K3s runs as single binary on the Linux operating system. This means it reduces dependencies and steps needed for installation, hence eases its bootstrapping process significantly. 
+[K3s](https://k3s.io/) runs as single binary on the Linux operating system. This means it reduces dependencies and steps needed for installation, hence eases its bootstrapping process significantly. 
 It strikes the perfect balance between easy installation and modular configurable options.
 
 K3s also powers Rancher (by SUSE) - an enterprise Kubernetes management platform (can be referred as Kubernetes-as-a-Service).
 With Rancher you can deploy and manage multiple K8s clusters at scale - from datacenter to cloud to edge.
 
-#### [Talos Linux](https://www.talos.dev/)
+### Talos Linux
 
-A production-grade hardened Kubernetes distribution that is secure, immutable (the root filesystem is mounted as read-only), and minimal.
+[Talos Linux](https://www.talos.dev/) is a production-grade hardened Kubernetes distribution that is secure, immutable (the root filesystem is mounted as read-only), and minimal.
 Talos Linux also removes host-level such as a Shell and SSH. 
 
 All system management is done via an API, secured with Mutual TLS.
@@ -163,23 +163,23 @@ An elegant and relatively simple deployable solution.
 ## Automated Image Updates
 
 We would like to automate the process of scanning our deployed applications for available updates and
-implement the change to the latest version.
+implement a workflow that will apply the changes to the latest version.
 
-[Renovate](https://github.com/renovatebot/renovate) can help us facilitate that:
+[Renovate](https://github.com/renovatebot/renovate) can help us with that task:
 
-- Renovate will constantly check (in a predefined schedule) for a new available update of the container images that are deployed in the cluster.
-- Upon discovering that a new image version is available, it will create a pull request pending approval.
-- Renovate offers us a rich overview of the release notes and further valuable details as part of the pull request.
+- Renovate will constantly check (in a predefined schedule) for new available images of our running containers in the cluster.
+- Upon discovering that a new image version is available, it will create a pull request pending our approval.
+- Renovate also offers us a rich overview of the release notes and further valuable details as part of the pull request.
 
 ## Monitoring
 
 Obseravbilty tools are essential and highly important when provisioning and maintaining any modern environment.
 
-The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is a widely-used tool, if not the defacto industry standard Kubernetes observabilty solution mostly recognized and adopted. 
+The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is a widely-used tool, if not the defacto industry standard Kubernetes observabilty solution that is mostly recognized and adopted.
 
 ## Hardware
 
-My current hardware includes:
+My current hardware setup includes:
 
 #### Staging Cluster
 
