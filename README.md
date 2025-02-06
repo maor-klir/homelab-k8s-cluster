@@ -1,4 +1,4 @@
-# Homelab
+# :house::wheel_of_dharma: Homelab
 
 ## Introduction 
 
@@ -11,11 +11,14 @@ Self-hosting also drives one to be accountable and responsible to take care of t
 
 That is where the GitOps operational framework kicks in and shines.
 
-- [Homelab](#homelab)
+- [:house::wheel\_of\_dharma: Homelab](#housewheel_of_dharma-homelab)
   - [Introduction](#introduction)
   - [GitOps](#gitops)
-      - [Pull vs. Push Architecture](#pull-vs-push-architecture)
-      - [OpenGitOps](#opengitops)
+    - [Pull vs. Push Architecture](#pull-vs-push-architecture)
+      - [Pull-based Model:](#pull-based-model)
+      - [Push-based Model:](#push-based-model)
+    - [OpenGitOps](#opengitops)
+      - [Key Takeaways:](#key-takeaways)
   - [Selecting a Kubernetes Distribution:](#selecting-a-kubernetes-distribution)
       - [K3s](#k3s)
       - [Talos Linux](#talos-linux)
@@ -38,29 +41,31 @@ That is where the GitOps operational framework kicks in and shines.
 GitOps is a set of best practices where the entire code delivery process is controlled via a distributed Version Control System (VCS), most commonly Git. 
 It applies to infrastructure and application code alike. It enables full automation that involves rapid updates and rollbacks.
 
-#### Pull vs. Push Architecture 
+### Pull vs. Push Architecture 
 
 It is important to mention that the GitOps methodology has two models in which it can operate and apply changes to the cluster environment: pull-based model and push-based model.
 
 ![alt text](gitops-push-vs-pull.jpg)
 
-**Pull-based Model:**
+#### Pull-based Model:
 
 In the pull-based model, a GitOps operator is continuously monitoring the desired state in a version-controlled Git repository for changes. 
 When changes are detected, the operator fetches the updated configuration from the repository and applies it to the target environment.
 
 It offers better control and governanace, easier auditing and compliance, and enables self-servicing the target environment by simply updating the codebase.
+
 Industry standard tools include Argo CD and Flux.
 
-**Push-based Model:**
+#### Push-based Model:
 
 In the push-based model, changes are pushed directly from the Git repository to the target environment, typically as a part of a CI/CD pipeline. 
 When changes are committed to the Git repository, the CI/CD pipeline triggers a deployment process that pushes the updated configuration to the target environment.
 
 It offers simplicity and generally faster deployments in comparisson to a pull-based model but on the down side, changes may be less predictable, harder to audit, and implementation usually involves more manual steps or custom automation scripts.
+
 Industry standard tools include GitHub Actions, GitLab CI, and Jenkins.
 
-#### OpenGitOps
+### OpenGitOps
 
 The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is following the pull-based model GitOps methodology and has defined its principles as follows:
 
@@ -71,21 +76,21 @@ The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is
 3. Pulled Automatically - Software agents automatically pull the desired state declarations from the source (Reconciliation Loop).
 4. Continuously Reconciled - Software agents continuously observe actual system state and attempt to apply the desired state.
 
-In other words:
+**In other words:**
 
 - The entire system (infrastructure and applications alike) is described declaratively.
 - The canonical desired system state is version controlled via Git.
 - Approved changes (through a Pull Request) are automated and applied to the system.
 - Software agents ensure correctness and alert upon recognizing drift from the desired state.
 
-It also highlights:
+**It also highlights:**
 
 - Transparency -  viewing Git commit history is public accessible and transparent to all
 - Collaboration - the codebase can be shared across teams enabling joint projects
 - Security hardening - Kubernetes API server access is not required since the changes are initiated from the remote Git codebase
 - Ease of Rollbacks - changing back to a previous state can be applied easily by reverting to an older commit in the Git codebase.
 
-Key Takeaways:
+#### Key Takeaways:
 
 1. The state of the cluster is always described in Git (infrastructure and application source code alike) 
 2. There is no external system who has full access permissions to the cluster. The cluster polls the Git code base for changes and will pull changes and deployment information.
@@ -120,7 +125,9 @@ With Rancher you can deploy and manage multiple K8s clusters at scale - from dat
 #### [Talos Linux](https://www.talos.dev/)
 
 A production-grade hardened Kubernetes distribution that is secure, immutable (the root filesystem is mounted as read-only), and minimal.
-Talos Linux also removes host-level such as a Shell and SSH. All system management is done via an API, secured with Mutual TLS.
+Talos Linux also removes host-level such as a Shell and SSH. 
+
+All system management is done via an API, secured with Mutual TLS.
 Talos abstracts some of K8s settings from the maintainer of the cluster.
 
 ## Flux
@@ -128,7 +135,7 @@ Talos abstracts some of K8s settings from the maintainer of the cluster.
 [Flux](https://fluxcd.io/) (commonly known as Flux CD) is an industry standard pull-based model GitOps tool.
 As mentioned before, I chose to fully commit to Flux while setting up this homelab.
 
-I opted for the [Monorepo](https://fluxcd.io/flux/guides/repository-structure/#monorepo)repository structure.
+I opted for the [Monorepo](https://fluxcd.io/flux/guides/repository-structure/#monorepo) repository structure.
 In a monorepo approach you would store all your Kubernetes manifests in a single Git repository. The various environments specific configs are all stored in the same branch (e.g. `main`).
 
 My implementation utilizes a Gitops workflow for multiple environments using Kustomize overlays and Helm deployed as CRDs through the Flux operator.
@@ -141,6 +148,7 @@ Flux has the ability to decrypt secrets stored in Flux sources by itself, withou
 The approach relies on keeping in Flux sources encrypted Kubernetes Secrets, which are decrypted on-demand with [SOPS](https://github.com/mozilla/sops), just before they are deployed into the target clusters.
 
 Since it is an out-of-the-box option offered by Flux, I chose to initially utilize SOPS and probably later on move to a cloud-based offering secrets management tool such as Azure Key Vault or AWS Secrets Manager.
+
 Flux [recommends](https://fluxcd.io/flux/guides/mozilla-sops/#encrypting-secrets-using-age) combining SOPS with [age](https://github.com/FiloSottile/age) for encrypting secrets. 
 
 
@@ -166,7 +174,8 @@ implement the change to the latest version.
 ## Monitoring
 
 Obseravbilty tools are essential and highly important when provisioning and maintaining any modern environment.
-The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack is a widely-used tool, if not the defacto industry standard Kubernetes observabilty solution mostly recognized and adopted. 
+
+The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is a widely-used tool, if not the defacto industry standard Kubernetes observabilty solution mostly recognized and adopted. 
 
 ## Hardware
 
@@ -191,7 +200,7 @@ Intended to serve as a playground for testing workloads, databases, secrets mana
 
 #### Monitoring
 
-- [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+- [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
 
 #### Automated Image Updates
 
