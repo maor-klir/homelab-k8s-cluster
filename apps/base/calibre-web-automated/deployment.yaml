@@ -12,7 +12,8 @@ spec:
       labels:
         app: calibre-web-automated
     spec:
-      #securityContext:
+      securityContext:
+         runAsNonRoot: true
          #fsGroup: 1000 
          #runAsUser: 1000 
          #runAsGroup: 1000 
