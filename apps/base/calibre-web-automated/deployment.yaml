@@ -23,7 +23,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: calibre-web-automated
-          image: ghcr.io/crocodilestick/calibre-web-automated:V3.0.3
+          image: crocodilestick/calibre-web-automated:V3.0.3
           securityContext:
             allowPrivilegeEscalation: false
           ports:
