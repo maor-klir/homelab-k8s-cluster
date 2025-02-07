@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calibre-web-automated
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calibre-web-automated
+  template:
+    metadata:
+      labels:
+        app: calibre-web-automated
+    spec:
+      securityContext:
+         fsGroup: 1000 
+         runAsUser: 1000 
+         runAsGroup: 1000 
+      volumes:
+      - name: cwa-data
+        persistentVolumeClaim:
+          claimName: cwa-data-pvc
+      restartPolicy: Always
+      containers:
+        - name: calibre-web-automated
+          image: ghcr.io/crocodilestick/calibre-web-automated:V3.0.3
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8083
+              protocol: TCP
+          volumeMounts:
+            - name: cwa-data
+              mountPath: /config
+              subPath: config
+            - name: cwa-data
+              mountPath: /calibre-library
+              subPath: calibre-library
+            - name: cwa-data
+              mountPath: /cwa-book-ingest
+              subPath: cwa-book-ingest
+          envFrom:
+          - configMapRef:
+              name: cwa-configmap

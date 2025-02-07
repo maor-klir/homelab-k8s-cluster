@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cwa-configmap
+  namespace: cwa
+data:
+  TZ: "Europe/Berlin"

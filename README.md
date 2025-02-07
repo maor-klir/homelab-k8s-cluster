@@ -3,9 +3,11 @@
 ## Introduction 
 
 This GitHub repository contains all the documentation and configuration of my self-hosted Kubernetes homelab.
-The purpose is first and foremost learning how to handle such equivalent environment in production (i.e. being hired to do so for an employer).
 
-Having that in mind will force one to take into account security, scalability, and backup strategies and adhere to industry standards best practices when provisioning different environments and maintaining the running workloads. 
+The purpose is first and foremost learning how to handle such equivalent environment in production running business-critical workloads.
+And such, I treat this project with great care, attention to details, and seriousness. 
+
+Having that in mind, forces one to take into account security, scalability, and backup strategies and adhere to industry standards best practices when provisioning different environments and maintaining the running workloads. 
 
 Self-hosting also drives one to be accountable and responsible to take care of the ease of deployment and maintenance opreations over time, in other words - settings up proper automation and applying improvements as the environment thickens. 
 
@@ -15,11 +17,11 @@ That is where the GitOps operational framework kicks in and shines.
   - [Introduction](#introduction)
   - [GitOps](#gitops)
     - [Pull vs. Push Architecture](#pull-vs-push-architecture)
-      - [Pull-based Model:](#pull-based-model)
-      - [Push-based Model:](#push-based-model)
+      - [Pull-based Model](#pull-based-model)
+      - [Push-based Model](#push-based-model)
     - [OpenGitOps](#opengitops)
-      - [Key Takeaways:](#key-takeaways)
-  - [Selecting a Kubernetes Distribution:](#selecting-a-kubernetes-distribution)
+      - [Key Takeaways](#key-takeaways)
+  - [Selecting a Kubernetes Distribution](#selecting-a-kubernetes-distribution)
     - [K3s](#k3s)
     - [Talos Linux](#talos-linux)
   - [Flux](#flux)
@@ -47,7 +49,7 @@ It is important to mention that the GitOps methodology has two models in which i
 
 ![alt text](gitops-push-vs-pull.jpg)
 
-#### Pull-based Model:
+#### Pull-based Model
 
 In the pull-based model, a GitOps operator is continuously monitoring the desired state in a version-controlled Git repository for changes. 
 When changes are detected, the operator fetches the updated configuration from the repository and applies it to the target environment.
@@ -56,7 +58,7 @@ It offers better control and governanace, easier auditing and compliance, and en
 
 Industry standard tools include Argo CD and Flux.
 
-#### Push-based Model:
+#### Push-based Model
 
 In the push-based model, changes are pushed directly from the Git repository to the target environment, typically as a part of a CI/CD pipeline. 
 When changes are committed to the Git repository, the CI/CD pipeline triggers a deployment process that pushes the updated configuration to the target environment.
@@ -90,7 +92,7 @@ The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is
 - Security hardening - Kubernetes API server access is not required since the changes are initiated from the remote Git codebase
 - Ease of Rollbacks - changing back to a previous state can be applied easily by reverting to an older commit in the Git codebase.
 
-#### Key Takeaways:
+#### Key Takeaways
 
 1. The state of the cluster is always described in Git (infrastructure and application source code alike) 
 2. There is no external system who has full access permissions to the cluster. The cluster polls the Git code base for changes and will pull changes and deployment information.
@@ -100,7 +102,7 @@ The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is
 **In my homelab I chose to go with a pull-based model, and specifically, with [Flux](https://fluxcd.io/) (commonly known as Flux CD)** 
 
 
-## Selecting a Kubernetes Distribution:
+## Selecting a Kubernetes Distribution
 
 We want to strike a balance, a sweet spot if you will, between being able to easily install and configure settings manually and having the ability to add modular configurable options. Between being able to experiment and on the other hand, easily maintain the cluster in the long term.
 
@@ -185,7 +187,7 @@ My current hardware setup includes:
 
 Intended to serve as a playground for testing workloads, databases, secrets managements, and various toolings prior deploying to production.
 
-- master-node-1: HP ProBook 650 G5 - Intel i5-8265U / 16GB RAM / 256GB SSD NVMe 
+- master-node-1: HP ProBook 650 G5 - Intel Core i5-8265U / 16GB RAM / 256GB SSD NVMe 
 
 #### Production Cluster
 
