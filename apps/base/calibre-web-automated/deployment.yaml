@@ -12,10 +12,10 @@ spec:
       labels:
         app: calibre-web-automated
     spec:
-      securityContext:
-         fsGroup: 1000 
-         runAsUser: 1000 
-         runAsGroup: 1000 
+      #securityContext:
+         #fsGroup: 1000 
+         #runAsUser: 1000 
+         #runAsGroup: 1000 
       volumes:
       - name: cwa-data
         persistentVolumeClaim:

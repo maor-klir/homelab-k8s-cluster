@@ -5,3 +5,5 @@ metadata:
   namespace: cwa
 data:
   TZ: "Europe/Berlin"
+  PUID: "1000"
+  PGID: "1000"
