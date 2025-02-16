@@ -3,4 +3,5 @@ kind: Kustomization
 namespace: k3s-system-update
 resources:
   - ../../base/system-upgrade-controller/
+  - crd.yaml
   - plan.yaml
