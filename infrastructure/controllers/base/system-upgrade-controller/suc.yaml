@@ -1,14 +1,21 @@
-
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+  name: system-upgrade
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: system-upgrade
+  namespace: system-upgrade
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: system-upgrade-controller
-  namespace: k3s-system-upgrade
+  namespace: system-upgrade
 rules:
 - apiGroups:
   - batch
@@ -125,7 +132,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: system-upgrade
-  namespace: k3s-system-upgrade
+  namespace: system-upgrade
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -146,7 +153,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: system-upgrade
-  namespace: k3s-system-upgrade
+  namespace: system-upgrade
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -159,7 +166,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: system-upgrade
-  namespace: k3s-system-upgrade
+  namespace: system-upgrade
 ---
 apiVersion: v1
 data:
@@ -175,11 +182,13 @@ data:
 kind: ConfigMap
 metadata:
   name: default-controller-env
+  namespace: system-upgrade
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: system-upgrade-controller
+  namespace: system-upgrade
 spec:
   selector:
     matchLabels:
