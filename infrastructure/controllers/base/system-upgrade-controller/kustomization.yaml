@@ -4,6 +4,4 @@ namespace: renovate
 resources:
   - namespace.yaml
   - crd.yaml
-  - deployment.yaml
-  - serviceaccount.yaml
-  - configmap.yaml
+  - implementation.yaml
