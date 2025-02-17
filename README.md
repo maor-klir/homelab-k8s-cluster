@@ -27,6 +27,7 @@ That is where the GitOps operational framework kicks in and shines.
   - [Flux](#flux)
   - [Secrets Management](#secrets-management)
   - [Enable Extrenal Access with Cloudflare Tunnels](#enable-extrenal-access-with-cloudflare-tunnels)
+  - [Automated K3s Cluster Upgrades](#automated-k3s-cluster-upgrades)
   - [Automated Image Updates](#automated-image-updates)
   - [Monitoring](#monitoring)
   - [Hardware](#hardware)
@@ -161,6 +162,15 @@ A [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connectio
 This functionality integrates flawlessly with managing DNS records on registered domains in Cloudflare Registrar (or transfered from another Domain Registrar).  
 
 An elegant and relatively simple deployable solution.  
+
+## Automated K3s Cluster Upgrades
+
+We can manage our K3s nodes upgrades using Rancher's [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller).
+
+It is a Kubernetes-native approach to cluster upgrades.
+It leverages a custom resource definition (CRD), a plan custom resource, and a [controller](https://kubernetes.io/docs/concepts/architecture/controller/).
+
+More details can be found here: [Automated Upgrades](https://docs.k3s.io/upgrades/automated)
 
 ## Automated Image Updates
 
