@@ -37,6 +37,7 @@ That is where the GitOps operational framework kicks in and shines.
       - [Applications](#applications)
       - [Monitoring](#monitoring-1)
       - [Automated Image Updates](#automated-image-updates-1)
+      - [Automated K3s Cluster Upgrades](#automated-k3s-cluster-upgrades-1)
 
 
 ## GitOps
@@ -217,3 +218,7 @@ Intended to serve as a playground for testing workloads, databases, secrets mana
 #### Automated Image Updates
 
 - [Renovate](https://github.com/renovatebot/renovate)
+
+#### Automated K3s Cluster Upgrades
+
+- [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller)
