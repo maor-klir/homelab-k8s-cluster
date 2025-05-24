@@ -1,0 +1,12 @@
+#cloud-config
+
+${general-config}
+  - mkdir -p $HOME/.kube
+  - sudo cp -i /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+  - sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  - echo "export KUBECONFIG=$HOME/.kube/config" >> $HOME/.bashrc
+  - source $HOME/.bashrc
+  - curl -sfLO https://github.com/cilium/cilium-cli/releases/download/v${cilium-cli-version}/cilium-linux-amd64.tar.gz
+  - tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
+  - rm cilium-linux-amd64.tar.gz
+  - ${cilium-cli-cmd}

@@ -1,0 +1,73 @@
+#!/bin/bash
+set -euo pipefail
+
+# --- Configuration ---
+PROXMOX_HOST="192.168.0.102"
+PROXMOX_USER="root" # Or a user with sudo access to qm commands
+SSH_KEY_PATH="~/.ssh/pve-host" # Path to your SSH private key
+
+CLOUD_IMAGE_URL="https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+CLOUD_IMAGE_BASENAME="noble-server-cloudimg-amd64.img" # Name after download
+VM_ID="7000" # Choose an unused VM ID for your base template
+VM_NAME="ubuntu-noble-base-cloud-init"
+STORAGE_POOL="local-zfs" # Your Proxmox storage pool for disks (e.g., local-lvm, cephfs)
+PROXMOX_QCOW_DIR="/var/lib/vz/template/qcow" # Default location for qcow2 templates on Proxmox
+
+# --- SSH Command Wrapper ---
+# Function to execute commands on the Proxmox host via SSH
+run_on_proxmox() {
+    ssh -i "${SSH_KEY_PATH}" \
+        -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o GlobalKnownHostsFile=/dev/null \
+        "${PROXMOX_USER}@${PROXMOX_HOST}" "bash -c \"$@\"" 2>/dev/null
+}
+
+# --- Script Logic ---
+
+echo "--- Starting Proxmox Base Cloud Image Setup ---"
+
+# 1. Download the cloud image to Proxmox host (if not already present)
+# This uses 'run_on_proxmox' to execute the wget command directly on the Proxmox host.
+echo "Checking and downloading cloud image on Proxmox host..."
+run_on_proxmox "[ ! -f ${PROXMOX_QCOW_DIR}/${CLOUD_IMAGE_BASENAME} ] && \
+    mkdir -p ${PROXMOX_QCOW_DIR} && \
+    wget -P ${PROXMOX_QCOW_DIR} ${CLOUD_IMAGE_URL} || \
+    echo 'Cloud image already exists on Proxmox, skipping download.'"
+
+# 2. Check and delete existing VM if it exists
+echo "Checking for existing VM ID ${VM_ID} on Proxmox..."
+if run_on_proxmox "qm status ${VM_ID}" &>/dev/null; then
+    echo "VM ID ${VM_ID} exists. Stopping and destroying it..."
+    run_on_proxmox "qm stop ${VM_ID} || true" # Stop, ignore error if already stopped
+    run_on_proxmox "qm destroy ${VM_ID}"
+else
+    echo "VM ID ${VM_ID} does not exist. Proceeding with creation."
+fi
+
+# 3. Create the base VM and import the disk
+echo "Creating VM ${VM_NAME} (ID: ${VM_ID}) and importing disk..."
+run_on_proxmox "qm create ${VM_ID} --name \"${VM_NAME}\" --memory 2048 --net0 virtio,bridge=vmbr0 --scsihw virtio-scsi-pci --vga serial0 --serial0 socket"
+run_on_proxmox "qm importdisk ${VM_ID} ${PROXMOX_QCOW_DIR}/${CLOUD_IMAGE_BASENAME} \"${STORAGE_POOL}\""
+
+# 4. Configure the VM
+echo "Configuring VM ${VM_ID} for cloud-init..."
+run_on_proxmox "qm set ${VM_ID} --scsi0 \"${STORAGE_POOL}:vm-${VM_ID}-disk-0,ssd=1\""
+run_on_proxmox "qm set ${VM_ID} --boot order=scsi0"
+run_on_proxmox "qm set ${VM_ID} --ide2 \"${STORAGE_POOL}:cloudinit\"" # Cloud-Init CD-ROM drive
+run_on_proxmox "qm set ${VM_ID} --agent 1" # Enable Qemu-Guest-Agent
+run_on_proxmox "qm set ${VM_ID} --ciuser cloud-init" # Default cloud-init user
+
+# IMPORTANT: For password, rely on your Packer's cloud_init_user_data or SSH keys.
+# Injecting a password here would overwrite the cloud-init user_data for initial boots.
+# If you NEED a fallback for initial SSH without cloud-init, set it here,
+# e.g., run_on_proxmox "qm set ${VM_ID} --cipassword $(openssl passwd -6 mysecretpassword)"
+# For initial SSH access *before* your Packer build, use SSH keys:
+# run_on_proxmox "qm set ${VM_ID} --sshkeys \"$(cat ~/.ssh/id_rsa.pub)\"" # Injects *your* public key from Packer host
+
+# 5. Convert to Template
+echo "Converting VM ${VM_ID} to a template..."
+run_on_proxmox "qm template ${VM_ID}"
+
+echo "--- Proxmox Base Cloud Image Setup Complete: ${VM_NAME} (ID: ${VM_ID}) ---"
+echo "You can now use '${VM_NAME}' or '${VM_ID}' as the 'template_name'/'template_id' in your Packer proxmox-clone build."

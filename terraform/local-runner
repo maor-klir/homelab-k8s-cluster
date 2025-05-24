@@ -1,0 +1,8 @@
+# Run Terraform
+terraform init \
+    -reconfigure
+
+terraform $* 
+
+# Clean up the local environment
+rm -rf .terraform
