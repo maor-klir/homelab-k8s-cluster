@@ -1,19 +1,32 @@
-# :house::wheel_of_dharma: Homelab
+# 🏡☸️ homelab-kubernetes-cluster
 
-## Introduction 
+## 📖 Introduction 
 
-This GitHub repository contains all the documentation and configuration of my self-hosted Kubernetes homelab.
+This GitHub repository contains all the documentation and configuration of my first self-hosted homelab Kubernetes environment implemented through [GitOps principles](https://opengitops.dev/) and powered by K3s, Flux, and Cilium.
 
-The purpose is first and foremost learning how to handle such equivalent environment in production running business-critical workloads.
-And such, I treat this project with great care, attention to details, and seriousness. 
+---
 
-Having that in mind, forces one to take into account security, scalability, and backup strategies and adhere to industry standards best practices when provisioning different environments and maintaining the running workloads. 
+## 🚧 Currently under heavy construction 🚧
 
-Self-hosting also drives one to be accountable and responsible to take care of the ease of deployment and maintenance opreations over time, in other words - settings up proper automation and applying improvements as the environment thickens. 
+I'm working on reshaping the entire structure and environment setup.
+This entails: 
+- switching from hosting on discrete bare metal small-form-factor mini PCs to rather provisioning nodes as VMs on a highly available Proxmox VE cluster
+- creating two Kubernetes clusters - `k3s-test` and `k3s-staging`
+- automating image creation and nodes deployment with Packer and Terraform
+- using Cilium as my go-to CNI and utilizing its Gateway API controller and L2 announcements capabilities
+
+---
+
+The purpose of this repository is first and foremost learning how to handle such equivalent environment in production running business-critical workloads.
+And such, I treat this project with great care and attention to details.
+
+Having that in mind, forces me to take into account security, scalability, and backup strategies and adhere to industry's best practices when provisioning different environments and maintaining the running workloads. 
+
+Self-hosting also drives one to be accountable and responsible to take care of the ease of deployment and maintenance opreations over time, in other words - settings up proper automation and applying improvements as the environment matures and thickens. 
 
 That is where the GitOps operational framework kicks in and shines.
 
-- [:house::wheel\_of\_dharma: Homelab](#housewheel_of_dharma-homelab)
+- [:house::wheel\_of\_dharma: homelab-kubernetes-cluster](#housewheel_of_dharma-homelab-kubernetes-cluster)
   - [Introduction](#introduction)
   - [GitOps](#gitops)
     - [Pull vs. Push Architecture](#pull-vs-push-architecture)
@@ -45,11 +58,11 @@ That is where the GitOps operational framework kicks in and shines.
 GitOps is a set of best practices where the entire code delivery process is controlled via a distributed Version Control System (VCS), most commonly Git. 
 It applies to infrastructure and application code alike. It enables full automation that involves rapid updates and rollbacks.
 
-### Pull vs. Push Architecture 
+### Pull vs. Push Model Architecture 
 
 It is important to mention that the GitOps methodology has two models in which it can operate and apply changes to the cluster environment: pull-based model and push-based model.
 
-![alt text](gitops-push-vs-pull.jpg)
+![Pull vs. Push Model Architecture](./docs/assests/gitops-push-vs-pull.jpg)
 
 #### Pull-based Model
 
@@ -65,7 +78,7 @@ Industry standard tools include Argo CD and Flux.
 In the push-based model, changes are pushed directly from the Git repository to the target environment, typically as a part of a CI/CD pipeline. 
 When changes are committed to the Git repository, the CI/CD pipeline triggers a deployment process that pushes the updated configuration to the target environment.
 
-It offers simplicity and generally faster deployments in comparisson to a pull-based model but on the down side, changes may be less predictable, harder to audit, and implementation usually involves more manual steps or custom automation scripts.
+It offers simplicity and generally faster deployments in comparisson to a pull-based model but on the down side, changes may be less predictable, harder to audit, and implementation usually requires explicitly defining and maintaining the deployment logic within the CI/CD pipeline configuration, which can involve custom automation scripts or detailed step definitions.
 
 Industry standard tools include GitHub Actions, GitLab CI, and Jenkins.
 
@@ -115,6 +128,8 @@ On top of that, we want to choose a Kubernetes distribution that is:
 **I opted for installing [K3s](https://k3s.io/) on an [Ubuntu Server](https://ubuntu.com/download/server) as my initial iteration.**
 
 My next iteration will include security hardening of the cluster by transitioning to [Talos Linux](https://www.talos.dev/).
+
+**[EDIT]:** I chose to stick to K3s for this environment and am exploring Talos Linux on my second Kubernetes environment - [homelab-k8s-cluster-2](https://github.com/maor-klir/homelab-k8s-cluster-2)
 
 Here is a brief overview of the two aforementioned distributions:
 
@@ -190,7 +205,7 @@ Obseravbilty tools are essential and highly important when provisioning and main
 
 The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is a widely-used tool, if not the defacto industry standard Kubernetes observabilty solution that is mostly recognized and adopted.
 
-## Hardware
+## 🏗️ Underlying Infrastructure
 
 My current hardware setup includes:
 
@@ -204,7 +219,7 @@ Intended to serve as a playground for testing workloads, databases, secrets mana
 
 ...in the making...
 
-## Current Workloads
+## 📦 Current Workloads
 
 #### Applications
 
