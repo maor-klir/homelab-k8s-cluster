@@ -1,0 +1,40 @@
+# cloud-config
+
+users:
+  - name: k3s-admin
+    passwd: $6$rounds=50000$3AgyYfnkxG776MxW$S5dWnUnjYQQ6HY34fP6/C91AKgWKuL3q7xlkz1Lvcq/.IrapZKWKIbg3qZbDcHRoDbsP9WND0naFSkrDVDQRp1
+    lock_passwd: false  # Disable password login
+    groups: adm, cdrom, dip, plugdev, lxd, sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJhj7pZo8NRSMFGFkuUiO8hEJF+eohqfydweD/UUN2d/ maor@fedora-workstation
+    sudo: ALL=(ALL) NOPASSWD:ALL
+
+hostname: k3s-control-plane
+
+package_reboot_if_required: true
+package_update: true
+package_upgrade: true
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/01-ssh-hardening.conf
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      ChallengeResponseAuthentication no
+      UsePAM no
+
+# packages:
+#   - qemu-guest-agent
+#   - net-tools
+#   - vim
+#   - apt-transport-https
+#   - ca-certificates
+#   - gpg
+#   - jq
+
+power_state:
+    delay: now
+    mode: reboot
+    message: Rebooting after cloud-init completion.
+    condition: true

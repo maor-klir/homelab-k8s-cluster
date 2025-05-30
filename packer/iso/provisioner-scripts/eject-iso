@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Forcibly eject ISO and prepare for reboot
+
+echo "Completed installation. Preparing for template conversion..."
+echo "Ejecting CD-ROM devices..."
+sudo eject /dev/sr0 || true
+sudo eject /dev/sr1 || true
+echo "Removing CD-ROM entries from fstab if present..."
+sudo sed -i '/cdrom/d' /etc/fstab
+sudo sync
+echo "Setting disk as boot device..."
+sudo sed -i 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=1/' /etc/default/grub
+sudo update-grub
+echo "Clearing cloud-init status to ensure fresh start on first boot..."
+sudo cloud-init clean --logs
+echo "Installation and cleanup completed successfully!"

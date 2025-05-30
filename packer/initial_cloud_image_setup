@@ -11,7 +11,7 @@ CLOUD_IMAGE_BASENAME="noble-server-cloudimg-amd64.img" # Name after download
 VM_ID="7000" # Choose an unused VM ID for your base template
 VM_NAME="ubuntu-noble-base-cloud-init"
 STORAGE_POOL="local-zfs" # Your Proxmox storage pool for disks (e.g., local-lvm, cephfs)
-PROXMOX_QCOW_DIR="/var/lib/vz/template/qcow" # Default location for qcow2 templates on Proxmox
+PROXMOX_QCOW_DIR="/var/lib/vz/template/iso" # Default location for qcow2 templates on Proxmox
 
 # --- SSH Command Wrapper ---
 # Function to execute commands on the Proxmox host via SSH

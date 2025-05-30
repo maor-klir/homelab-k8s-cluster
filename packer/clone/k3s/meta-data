@@ -1,0 +1,4 @@
+#cloud-config
+
+instance-id: ubuntu-server-24.04-lts
+local-hostname: k3s-template

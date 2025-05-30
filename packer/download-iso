@@ -1,0 +1,33 @@
+#!/bin/bash
+set -euo pipefail
+
+# --- Configuration ---
+PROXMOX_HOST="192.168.0.102"
+PROXMOX_USER="root" # Or a user with sudo access to qm commands
+SSH_KEY_PATH="~/.ssh/pve-host" # Path to your SSH private key
+
+ISO_IMAGE_URL="https://mirror.kkg.berlin/ubuntu-releases/noble/ubuntu-24.04.2-live-server-amd64.iso"
+ISO_IMAGE_BASENAME="ubuntu-24.04.2-live-server-amd64.iso" # Name after download
+STORAGE_POOL="local-zfs" # Your Proxmox storage pool for disks (e.g., local-lvm, cephfs)
+PROXMOX_ISO_DIR="/var/lib/vz/template/iso" # Default location for ISOs templates on Proxmox
+
+# --- SSH Command Wrapper ---
+# A function to execute commands on the Proxmox VE host via SSH
+run_on_proxmox() {
+    ssh -i "${SSH_KEY_PATH}" \
+        -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o GlobalKnownHostsFile=/dev/null \
+        "${PROXMOX_USER}@${PROXMOX_HOST}" "bash -c \"$@\"" 2>/dev/null
+}
+
+echo "--- Starting the ISO image download ---"
+
+# Download the ISO image onto the Proxmox VE host (if not already present)
+echo "Checking and downloading the ISO image onto the Proxmox VE host..."
+run_on_proxmox "[ ! -f ${PROXMOX_ISO_DIR}/${ISO_IMAGE_BASENAME} ] && \
+    mkdir -p ${PROXMOX_ISO_DIR} && \
+    wget -P ${PROXMOX_ISO_DIR} ${ISO_IMAGE_URL} || \
+    echo "The ISO image already exists on the Proxmox VE host, skipping download.""
+
+echo "--- The ISO image download is completed ---"

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Installing K3s
+curl -sfL https://get.k3s.io | sh -s - \
+  --write-kubeconfig-mode=644 \
+  --flannel-backend=none \
+  --disable-kube-proxy \
+  --disable servicelb \
+  --disable-network-policy \
+  --disable traefik \
+  --cluster-init
+echo "K3s installed successfully."
+
+# Setting up kubeconfig
+mkdir -p $HOME/.kube
+sudo cp -i /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+echo "export KUBECONFIG=$HOME/.kube/config" >> $HOME/.bashrc
+source $HOME/.bashrc
+echo "kubeconfig set up successfully."

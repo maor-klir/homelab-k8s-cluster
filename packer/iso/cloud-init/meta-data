@@ -1,4 +1,4 @@
 #cloud-config
 
-instance-id: ubuntu-server-2404
+instance-id: ubuntu-server-24.04-lts
 local-hostname: ubuntu-template
