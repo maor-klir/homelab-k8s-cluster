@@ -22,7 +22,7 @@ spec:
             claimName: linkding-data-pvc
       containers:
         - name: linkding
-          image: sissbruecker/linkding:1.39.1
+          image: sissbruecker/linkding:1.44.1
           securityContext:
             allowPrivilegeEscalation: false
           ports:
@@ -30,6 +30,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/linkding/data
               name: linkding-data
-          envFrom:
-            - secretRef:
-                name: superuser-cred
+          # envFrom:
+          #   - secretRef:
+          #       name: superuser-cred
