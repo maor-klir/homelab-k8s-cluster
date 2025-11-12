@@ -4,15 +4,16 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-    -  id: trailing-whitespace
-    -  id: end-of-file-fixer
-    -  id: check-yaml
-    -  id: check-added-large-files
-    -  id: check-toml
-    -  id: detect-private-key
-    -  id: mixed-line-ending
-       args: [--fix=no]
-    -  id: check-shebang-scripts-are-executable
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-added-large-files
+      - id: check-toml
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: [--fix=no]
+      - id: check-shebang-scripts-are-executable
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.28.0
     hooks:
