@@ -5,8 +5,8 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m0s
-  # dependsOn:
-  #   - name: infra-configs
+  # dependsOn:                  # An optional list used to refer to other Kustomization objects that the Kustomization depends on.
+  #   - name: infra-configs     # If specified, then the Kustomization is only applied after the referred Kustomizations are ready, i.e. have the Ready condition marked as True
   retryInterval: 1m
   timeout: 5m
   sourceRef:

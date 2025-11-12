@@ -17,9 +17,9 @@ spec:
         runAsUser: 33 # www-data UID
         runAsGroup: 33 # www-data GID
       volumes:
-      - name: linkding-data
-        persistentVolumeClaim:
-          claimName: linkding-data-pvc
+        - name: linkding-data
+          persistentVolumeClaim:
+            claimName: linkding-data-pvc
       containers:
         - name: linkding
           image: sissbruecker/linkding:1.39.1
@@ -31,5 +31,5 @@ spec:
             - mountPath: /etc/linkding/data
               name: linkding-data
           envFrom:
-          - secretRef:
-              name: superuser-cred   
+            - secretRef:
+                name: superuser-cred

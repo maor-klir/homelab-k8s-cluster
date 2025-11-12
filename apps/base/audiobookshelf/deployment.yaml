@@ -13,13 +13,13 @@ spec:
         app: audiobookshelf
     spec:
       securityContext:
-         fsGroup: 1000 # node GID
-         runAsUser: 1000 # node UID
-         runAsGroup: 1000 # node GID
+        fsGroup: 1000 # node GID
+        runAsUser: 1000 # node UID
+        runAsGroup: 1000 # node GID
       volumes:
-      - name: audiobookshelf-data
-        persistentVolumeClaim:
-          claimName: audiobookshelf-data-pvc
+        - name: audiobookshelf-data
+          persistentVolumeClaim:
+            claimName: audiobookshelf-data-pvc
       restartPolicy: Always
       containers:
         - name: audiobookshelf
@@ -43,7 +43,7 @@ spec:
               mountPath: /metadata
               subPath: metadata
           envFrom:
-          # - secretRef:
-          #   name: superuser-cred   
-          - configMapRef:
-              name: audiobookshelf-configmap
+            # - secretRef:
+            #   name: superuser-cred
+            - configMapRef:
+                name: audiobookshelf-configmap

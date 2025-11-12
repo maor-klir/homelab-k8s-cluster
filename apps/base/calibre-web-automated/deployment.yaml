@@ -13,14 +13,14 @@ spec:
         app: calibre-web-automated
     spec:
       securityContext:
-         runAsNonRoot: true
-         #fsGroup: 1000 
-         #runAsUser: 1000 
-         #runAsGroup: 1000 
+        runAsNonRoot: true
+        #fsGroup: 1000
+        #runAsUser: 1000
+        #runAsGroup: 1000
       volumes:
-      - name: cwa-data
-        persistentVolumeClaim:
-          claimName: cwa-data-pvc
+        - name: cwa-data
+          persistentVolumeClaim:
+            claimName: cwa-data-pvc
       restartPolicy: Always
       containers:
         - name: calibre-web-automated
@@ -41,5 +41,5 @@ spec:
               mountPath: /cwa-book-ingest
               subPath: cwa-book-ingest
           envFrom:
-          - configMapRef:
-              name: cwa-configmap
+            - configMapRef:
+                name: cwa-configmap
