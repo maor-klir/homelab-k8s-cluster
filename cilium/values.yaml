@@ -15,9 +15,9 @@ ingressController:
   enabled: true
   default: true
   loadbalancerMode: shared
-  service:
-    labels:
-      cilium-lb-pool: lb-pool
+  # service:
+  #   labels:
+  #     cilium-lb-pool: lb-pool
 
 # gatewayAPI:
 #   enabled: true
