@@ -19,11 +19,6 @@ spec:
     crds: CreateReplace
   driftDetection:
     mode: enabled
-  verify:
-    provider: gpg
-    secretRef:
-      name: cert-manager-gpg-key
-
   values:
     crds:
       # This option decides if the CRDs should be installed

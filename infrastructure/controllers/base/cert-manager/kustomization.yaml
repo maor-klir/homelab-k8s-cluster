@@ -5,5 +5,4 @@ resources:
   - repository.yaml
   - release.yaml
   - cloudflare-api-token-secret.yaml
-  - cert-manager-gpg-key.yaml
   # - cluster-issuer.yaml
