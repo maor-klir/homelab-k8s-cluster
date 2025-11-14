@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-tls
+  namespace: monitoring
+spec:
+  secretName: grafana-tls # cert-manager stores the key & cert here
+  issuerRef:
+    name: acme-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - grafana-k3s.cloudandklir.com

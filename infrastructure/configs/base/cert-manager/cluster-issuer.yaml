@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: acme-cluster-issuer
+  name: acme-prod
 spec:
   acme:
     # Let's Encrypt will use this email to contact you about expiring

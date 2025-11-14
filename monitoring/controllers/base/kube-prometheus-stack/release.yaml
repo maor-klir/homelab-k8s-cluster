@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: kube-prometheus-stack
-      version: "79.*"
+      version: "79.x"
       sourceRef:
         kind: HelmRepository
         name: kube-prometheus-stack
@@ -32,9 +32,9 @@ spec:
         ingressClassName: cilium
         hosts:
           - grafana-k3s.cloudandklir.com
-        # ## TLS configuration for grafana Ingress
-        # ## Secret must be manually created in the namespace
-        # tls:
-        #   - secretName: grafana-tls-secret
-        #     hosts:
-        #       - grafana-k3s.cloudandklir.com
+        ## TLS configuration for grafana Ingress
+        ## Secret must be manually created in the namespace
+        tls:
+          - secretName: grafana-tls
+            hosts:
+              - grafana-k3s.cloudandklir.com
