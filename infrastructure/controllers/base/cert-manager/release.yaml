@@ -1,0 +1,48 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: cert-manager
+      sourceRef:
+        kind: OCIRepository
+        name: cert-manager
+        namespace: cert-manager
+      interval: 12h
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  driftDetection:
+    mode: enabled
+  verify:
+    provider: gpg
+    secretRef:
+      name: cert-manager-gpg-key
+
+  values:
+    crds:
+      # This option decides if the CRDs should be installed
+      # as part of the Helm installation.
+      enabled: true
+
+      # This option makes it so that the "helm.sh/resource-policy": keep
+      # annotation is added to the CRD. This will prevent Helm from uninstalling
+      # the CRD when the Helm release is uninstalled.
+      # WARNING: when the CRDs are removed, all cert-manager custom resources
+      # (Certificates, Issuers, ...) will be removed too by the garbage collector.
+      keep: true
+
+      # Setting Nameservers for DNS01 Self Check.
+      # For more information, see the [cert-manager documentation](https://cert-manager.io/docs/configuration/acme/dns01/#setting-nameservers-for-dns01-self-check).
+
+      # A comma-separated string with the host and port of the recursive nameservers cert-manager should query.
+      # dns01RecursiveNameservers: "8.8.8.8:53,1.1.1.1:53"
+
+      # # Forces cert-manager to use only the recursive nameservers for verification.
+      # # Enabling this option could cause the DNS01 self check to take longer owing to caching performed by the recursive nameservers.
+      # dns01RecursiveNameserversOnly: true
