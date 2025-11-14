@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: acme-staging
+spec:
+  acme:
+    # Let's Encrypt will use this email to contact you about expiring
+    # certificates and issues related to your account.
+    email: maor.klir@gmail.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    # Secret resource that will be used to store the account's private key.
+    privateKeySecretRef:
+      name: acme-staging
+    # Opted for the DNS01 challenge provider over HTTP-01
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token

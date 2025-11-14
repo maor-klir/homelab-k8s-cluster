@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: grafana-tls # cert-manager stores the key & cert here
   issuerRef:
-    name: acme-prod
+    name: acme-staging
     kind: ClusterIssuer
   dnsNames:
     - grafana-k3s.cloudandklir.com
