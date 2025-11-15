@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-secrets-operator
+  namespace: external-secrets-operator
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: external-secrets
+      version: "1.0.x"
+      sourceRef:
+        kind: HelmRepository
+        name: external-secrets
+        namespace: external-secrets-operator
+      interval: 12h
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  driftDetection:
+    mode: enabled
+  values:
+    installCRDs: true
