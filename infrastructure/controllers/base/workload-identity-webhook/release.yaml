@@ -20,3 +20,5 @@ spec:
     crds: CreateReplace
   driftDetection:
     mode: enabled
+  values:
+    azureTenantID: "7a07eeec-fee1-4167-a709-209e4f54f334"
