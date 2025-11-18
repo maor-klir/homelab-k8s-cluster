@@ -4,3 +4,4 @@ resources:
   - cilium/
   - cert-manager/
   - workload-identity-webhook/
+  - external-secrets-operator/
