@@ -4,5 +4,4 @@ namespace: renovate
 resources:
   - namespace.yaml
   - configmap.yaml
-  - secret.yaml
   - cronjob.yaml
