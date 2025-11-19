@@ -3,5 +3,4 @@ kind: Kustomization
 namespace: system-upgrade
 resources:
   - ../../base/system-upgrade-controller/
-  - crd.yaml
   - plan.yaml

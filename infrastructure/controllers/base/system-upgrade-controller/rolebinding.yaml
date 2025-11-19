@@ -8,6 +8,6 @@ roleRef:
   kind: Role
   name: system-upgrade-controller
 subjects:
-- kind: ServiceAccount
-  name: system-upgrade
-  namespace: system-upgrade
+  - kind: ServiceAccount
+    name: system-upgrade
+    namespace: system-upgrade

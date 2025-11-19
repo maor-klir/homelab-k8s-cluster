@@ -6,3 +6,4 @@ resources:
   - workload-identity-webhook/
   - external-secrets-operator/
   - renovate/
+  - system-upgrade-controller/
