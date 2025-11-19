@@ -5,3 +5,4 @@ resources:
   - cert-manager/
   - workload-identity-webhook/
   - external-secrets-operator/
+  - renovate/

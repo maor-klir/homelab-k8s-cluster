@@ -4,7 +4,7 @@ metadata:
   name: renovate
 spec:
   schedule: "@hourly"
-  concurrencyPolicy: Forbid
+  concurrencyPolicy: Forbid # Prevent overlapping cronjob runs
   jobTemplate:
     spec:
       template:
@@ -16,7 +16,7 @@ spec:
                 - maor-klir/homelab-k8s-cluster
               envFrom:
                 - secretRef:
-                    name: renovate-container-env
+                    name: renovate-github-token
                 - configMapRef:
                     name: renovate-configmap
           restartPolicy: Never
