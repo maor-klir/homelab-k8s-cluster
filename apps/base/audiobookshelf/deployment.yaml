@@ -46,8 +46,6 @@ spec:
               mountPath: /metadata
               subPath: metadata
           envFrom:
-            # - secretRef:
-            #   name: superuser-cred
             - configMapRef:
                 name: audiobookshelf-configmap
       volumes:
