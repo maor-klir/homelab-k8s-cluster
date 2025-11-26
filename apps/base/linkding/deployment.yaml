@@ -25,6 +25,13 @@ spec:
           image: sissbruecker/linkding:1.44.1
           securityContext:
             allowPrivilegeEscalation: false
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
           ports:
             - containerPort: 9090
           volumeMounts:
