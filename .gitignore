@@ -1,9 +1,11 @@
-# Local .terraform directories
-**/.terraform/*
+# Terraform provider files
+**/.terraform
+**/.terraform.lock.hcl
 
-# .tfstate files
+# Terraform variable files
+# **/*.tfvars
+# **/*.auto.tfvars
+
+# Terraform state files
 **/*.tfstate
 **/*.tfstate.*
-
-# Ignore provider lock file
-**/.terraform.lock.hcl
