@@ -1,0 +1,37 @@
+users:
+  - name: ${username}
+    lock_passwd: false
+    groups: [adm, cdrom, dip, lxd, sudo]
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ${public-key}
+
+hostname: ${hostname}
+package_reboot_if_required: true
+package_update: true
+package_upgrade: true
+locale: en_US.UTF-8
+timezone: Europe/Berlin
+keyboard:
+  layout: us
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/01-ssh-hardening.conf
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication yes
+      ChallengeResponseAuthentication no
+      UsePAM yes
+
+packages:
+  - qemu-guest-agent
+  - net-tools
+
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+
+power_state:
+  delay: now
+  mode: reboot
+  message: Rebooting after cloud-init completion
+  condition: true
