@@ -1,53 +1,134 @@
-# variable "proxmox" {
-#   description = "Proxmox provider configuration"
-#   type = object({
-#     node_name = string
-#     endpoint  = string
-#     insecure  = bool
-#     username  = string
-#     password  = string
-#   })
-# }
+variable "pve_node_name" {
+  description = "The Proxmox Virtual Environment node name where VMs will be created"
+  type        = map(string)
+  default = {
+    node_01 = "pve-01"
+    node_02 = "pve-02"
+    node_03 = "pve-03"
+  }
+}
 
-variable "proxmox_api_token" {
-  description = "Proxmox API token"
+variable "private_ssh_key" {
+  description = "The private SSH key content for accessing the Proxmox server"
   type        = string
   sensitive   = true
 }
 
-variable "vm_hostname" {
-  description = "VM hostname"
+variable "k3s_vm_dns" {
+  description = "DNS config for the K3s VMs"
+  type = object({
+    domain  = string
+    servers = list(string)
+  })
+}
+
+variable "k3s_vm_user" {
+  description = "K3s VM username"
   type        = string
 }
 
-variable "vm_username" {
-  description = "VM username"
+variable "k3s_public_key" {
+  description = "K3s user public key"
   type        = string
 }
 
-variable "vm_password" {
-  description = "VM password"
-  type        = string
-  sensitive   = true
-}
-
-# variable "username" {
-#   description = "PVE API username"
+# variable "cilium-cli-version" {
+#   description = "Cilium CLI version"
 #   type        = string
 # }
+########################################################################################
+##### Azure variables for HCP Terraform integration - Dynamic provider credentials #####
+########################################################################################
 
-# variable "password" {
-#   description = "PVE API password"
-#   type        = string
-#   sensitive   = true
-# }
-
-variable "host_public_key" {
-  description = "Host public key"
+variable "hcpt_azure_audience" {
   type        = string
+  default     = "api://AzureADTokenExchange"
+  description = "The audience value to use in run identity tokens"
 }
 
-variable "cilium_cli_version" {
-  description = "Cilium CLI version"
+variable "hcpt_hostname" {
   type        = string
+  default     = "app.terraform.io"
+  description = "The hostname of the HCP Terraform or TFE instance we'd like to use with Azure"
+}
+
+variable "hcpt_organization_name" {
+  type        = string
+  default     = "maor"
+  description = "The name of our HCP Terraform organization"
+}
+
+variable "hcpt_project_name" {
+  type        = string
+  default     = "Default Project"
+  description = "The project under which a workspace will be created"
+}
+
+variable "hcpt_workspace_name" {
+  type        = string
+  description = "The name of the workspace that we'd like to create and connect to Azure"
+}
+
+variable "azure_subscription_id" {
+  type        = string
+  description = "Azure Subscription ID where resources will be created"
+}
+
+################################################################
+##### Azure variables for workload identity implementation #####
+################################################################
+
+variable "oidc_rg" {
+  type        = string
+  description = "OIDC issuer resource group"
+}
+
+variable "oidc_rg_location" {
+  type        = string
+  description = "OIDC issuer resource group location"
+  default     = "West Europe"
+}
+
+variable "oidc_storage_account" {
+  type        = string
+  description = "OIDC issuer storage account name"
+}
+
+variable "oidc_storage_container" {
+  type        = string
+  description = "OIDC issuer storage container name"
+}
+
+variable "azwi_rg" {
+  type        = string
+  description = "Azure Workload Identity resource group name"
+}
+
+variable "azwi_rg_location" {
+  type        = string
+  description = "Azure Workload Identity resource group location"
+  default     = "West Europe"
+}
+
+variable "akv_azwi_name" {
+  type        = string
+  description = "Azure Key Vault for Azure Workload Identity name"
+}
+
+variable "akv_azwi_location" {
+  type        = string
+  description = "Azure Key Vault for Azure Workload Identity location"
+  default     = "West Europe"
+}
+
+variable "azwi_service_account_namespace" {
+  type        = string
+  description = "Kubernetes namespace for the Azure Workload Identity service account"
+  default     = "external-secrets-operator"
+}
+
+variable "azwi_service_account_name" {
+  type        = string
+  description = "Kubernetes service account name for Azure Workload Identity"
+  default     = "workload-identity-sa"
 }

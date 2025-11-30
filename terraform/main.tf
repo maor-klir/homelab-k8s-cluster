@@ -1,97 +1,170 @@
 resource "proxmox_virtual_environment_vm" "k3s-cp-01" {
-  provider  = proxmox
-  node_name = "pve-02"
-
   name        = "k3s-cp-01"
-  description = "K3s-cp-01"
+  description = "K3s control plane node 01"
   tags        = ["k3s", "control-plane"]
+  node_name   = var.pve_node_name.node_01
+  vm_id       = "101"
   on_boot     = true
-  vm_id       = 1001
 
+  started       = true
   machine       = "q35"
   scsi_hardware = "virtio-scsi-single"
   bios          = "ovmf"
 
+  # clone {
+  #   vm_id = data.proxmox_virtual_environment_vm.k3s-ubuntu-template.vm_id
+  # }
+
+  agent {
+    enabled = false
+  }
 
   cpu {
     cores = 2
-    type  = "x86-64-v2-AES"
+    type  = "host"
   }
 
   memory {
-    dedicated = 4096
-  }
-
-  network_device {
-    bridge = "vmbr0"
-  }
-
-  efi_disk {
-    datastore_id = "local-zfs"
-    file_format  = "raw" // To support qcow2 format
-    type         = "4m"
-  }
-
-  disk {
-    datastore_id = "local-zfs"
-    file_id      = proxmox_virtual_environment_download_file.ubuntu.id
-    interface    = "scsi0"
-    cache        = "writethrough"
-    discard      = "on"
-    ssd          = true
-    size         = 32
-  }
-
-  boot_order = ["scsi0"]
-
-  # Enable QEMU guest agent
-  agent {
-    enabled = true
+    dedicated = 16384
   }
 
   operating_system {
-    type = "l26" # Linux Kernel 2.6 - 6.X.
+    type = "l26"
+  }
+
+  efi_disk {
+    type              = "4m"
+    pre_enrolled_keys = true
   }
 
   initialization {
-    meta_data_file_id = proxmox_virtual_environment_file.pve-cp.id
-    datastore_id      = "local-zfs"
+    dns {
+      domain  = var.k3s_vm_dns.domain
+      servers = var.k3s_vm_dns.servers
+    }
     ip_config {
       ipv4 {
-        address = "192.168.1.151/24"
+        address = "192.168.0.201/24"
         gateway = "192.168.0.1"
       }
+    }
+    user_account {
+      username = var.k3s_vm_user
+      keys     = [var.k3s_public_key]
     }
   }
 }
 
-# output "k3s-cp-01-ipv4" {
-#   depends_on = [proxmox_virtual_environment_vm.k3s-cp-01]
-#   value      = proxmox_virtual_environment_vm.k3s-cp-01.ipv4_addresses[1][0]
-# }
+resource "proxmox_virtual_environment_vm" "k3s-worker-01" {
+  name        = "k3s-worker-01"
+  description = "K3s worker node 01"
+  tags        = ["k3s", "worker"]
+  node_name   = var.pve_node_name.node_02
+  vm_id       = "102"
+  on_boot     = true
 
-# resource "local_file" "k3s-cp-01-ipv4" {
-#   content         = proxmox_virtual_environment_vm.k3s-cp-01.ipv4_addresses[1][0]
-#   filename        = "output/k3s-cp-01-ipv4.txt"
-#   file_permission = "0644"
-# }
+  started       = true
+  machine       = "q35"
+  scsi_hardware = "virtio-scsi-single"
+  bios          = "ovmf"
 
-# module "kube-config" {
-#   depends_on   = [local_file.k3s-cp-01-ipv4]
-#   source       = "Invicton-Labs/shell-resource/external"
-#   version      = "0.4.1"
-#   command_unix = "ssh -o StrictHostKeyChecking=no ${var.vm_username}@${local_file.k3s-cp-01-ipv4.content} cat /home/${var.vm_username}/.kube/config"
-# }
+  # clone {
+  #   vm_id = data.proxmox_virtual_environment_vm.k3s-ubuntu-template.vm_id
+  # }
 
-# resource "local_file" "kube-config" {
-#   content         = module.kube-config.stdout
-#   filename        = "output/config"
-#   file_permission = "0600"
-# }
+  agent {
+    enabled = false
+  }
 
-# module "kubeadm-join" {
-#   depends_on   = [local_file.kube-config]
-#   source       = "Invicton-Labs/shell-resource/external"
-#   version      = "0.4.1"
-#   command_unix = "ssh -o StrictHostKeyChecking=no ${var.vm_username}@${local_file.k3s-ctrl-01-ipv4.content} /usr/bin/kubeadm token create --print-join-command"
-# }
+  cpu {
+    cores = 2
+    type  = "host"
+  }
+
+  memory {
+    dedicated = 8192
+  }
+
+  operating_system {
+    type = "l26"
+  }
+
+  efi_disk {
+    type              = "4m"
+    pre_enrolled_keys = true
+  }
+
+  initialization {
+    dns {
+      domain  = var.k3s_vm_dns.domain
+      servers = var.k3s_vm_dns.servers
+    }
+    ip_config {
+      ipv4 {
+        address = "192.168.0.202/24"
+        gateway = "192.168.0.1"
+      }
+    }
+    user_account {
+      username = var.k3s_vm_user
+      keys     = [var.k3s_public_key]
+    }
+  }
+}
+
+resource "proxmox_virtual_environment_vm" "k3s-worker-02" {
+  name        = "k3s-worker-02"
+  description = "K3s worker node 02"
+  tags        = ["k3s", "worker"]
+  node_name   = var.pve_node_name.node_03
+  vm_id       = "103"
+  on_boot     = true
+
+  started       = true
+  machine       = "q35"
+  scsi_hardware = "virtio-scsi-single"
+  bios          = "ovmf"
+
+  # clone {
+  #   vm_id = data.proxmox_virtual_environment_vm.k3s-ubuntu-template.vm_id
+  # }
+
+  agent {
+    enabled = false
+  }
+
+  cpu {
+    cores = 2
+    type  = "host"
+  }
+
+  memory {
+    dedicated = 8192
+  }
+
+  operating_system {
+    type = "l26"
+  }
+
+  efi_disk {
+    type              = "4m"
+    pre_enrolled_keys = true
+  }
+
+  initialization {
+    dns {
+      domain  = var.k3s_vm_dns.domain
+      servers = var.k3s_vm_dns.servers
+    }
+    ip_config {
+      ipv4 {
+        address = "192.168.0.203/24"
+        gateway = "192.168.0.1"
+      }
+    }
+    user_account {
+      username = var.k3s_vm_user
+      keys     = [var.k3s_public_key]
+    }
+  }
+}
