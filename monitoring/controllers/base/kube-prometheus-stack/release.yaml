@@ -2,6 +2,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: kube-prometheus-stack
+  namespace: monitoring
 spec:
   interval: 30m
   chart:
@@ -25,8 +26,30 @@ spec:
         target:
           kind: PrometheusRule
   values:
+    prometheus:
+      prometheusSpec:
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 50Gi
+        retention: 30d
+        retentionSize: "45GB" # Should be slightly less than storage (50Gi)
+
     grafana:
-      adminPassword: maor
+      admin:
+        existingSecret: grafana-admin-credentials
+        userKey: admin-user
+        passwordKey: admin-password
       ingress:
         enabled: true
         ingressClassName: cilium
@@ -38,3 +61,30 @@ spec:
           - secretName: grafana-tls
             hosts:
               - grafana-k3s.cloudandklir.com
+      # Enable Grafana's unified alerting (uses built-in alert manager)
+      grafana.ini:
+        unified_alerting:
+          enabled: true
+        alerting:
+          enabled: false # Disable legacy alerting
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://kube-prometheus-stack-prometheus:9090
+              isDefault: true
+      persistence:
+        enabled: true
+        size: 10Gi
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "100m"
+        limits:
+          memory: "512Mi"
+          cpu: "500m"
+    # Disable the bundled Alertmanager as we are using Grafana's unified alerting
+    alertmanager:
+      enabled: false

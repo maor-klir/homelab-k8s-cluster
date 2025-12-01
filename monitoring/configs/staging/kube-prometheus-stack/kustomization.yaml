@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - tls-certificate.yaml
+  - external-secret.yaml
