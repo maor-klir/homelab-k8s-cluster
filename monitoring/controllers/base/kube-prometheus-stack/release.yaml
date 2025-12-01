@@ -78,7 +78,11 @@ spec:
       persistence:
         enabled: true
         size: 10Gi
-      # Disable init-chown-data container to avoid permission issues with local-path-provisioner
+      # Fix permission issues with local-path-provisioner
+      securityContext:
+        runAsUser: 472
+        runAsGroup: 472
+        fsGroup: 472
       initChownData:
         enabled: false
       resources:
