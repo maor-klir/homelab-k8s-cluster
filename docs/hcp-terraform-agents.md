@@ -1,8 +1,8 @@
 # HCP Terraform Agents
 
-HCP Terraform Agents allow HCP Terraform to communicate with isolated, private, or on-premises infrastructure.
-By deploying lightweight agents within a specific network segment, we can establish a simple connection between our environment and HCP Terraform, facilitating provisioning and management operations.
-This is useful for on-premises infrastructure, enterprise networking providers, and any systems in a protected enclave.
+HCP Terraform Agents allow HCP Terraform to communicate with isolated, private, or on-premises infrastructure.  
+By deploying lightweight agents within a specific network segment, we can establish a simple connection between our environment and HCP Terraform, facilitating provisioning and management operations.  
+This is useful for on-premises infrastructure, enterprise networking providers, and any systems in a protected enclave.  
 The agent requires only outbound connectivity to HCP Terraform, enabling private networks to remain secure.  No special networking configuration or exceptions are typically needed.
 
 Tutorial: https://developer.hashicorp.com/terraform/tutorials/cloud/cloud-agents
@@ -55,7 +55,7 @@ drwxr-x--- 6 ubuntu ubuntu     4096 Oct 26 17:37 ..
 -rw-r--r-- 1 ubuntu ubuntu 38435028 Oct 26 17:29 tfc-agent_1.25.1_linux_amd64.zip
 ```
 
-The `unzip` command extracts two individual binaries (`tfc-agent` and `tfc-agent-core`). These binaries must reside in the same directory for the agent to function properly.
+The `unzip` command extracts two individual binaries (`tfc-agent` and `tfc-agent-core`). These binaries must reside in the same directory for the agent to function properly.  
 
 To start the agent and connect it to an HCP Terraform agent pool:
 
