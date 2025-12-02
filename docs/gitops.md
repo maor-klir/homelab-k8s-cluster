@@ -8,7 +8,7 @@ The core idea of GitOps is having a distributed Version Control System (VCS), mo
 
 It is important to mention that the GitOps methodology has two models in which it can operate and apply changes to the cluster environment: a _pull-based_ model and a _push-based_ model.
 
-![Pull vs. Push Model Architecture](./docs/assests/gitops-push-vs-pull.jpg)
+![Pull vs. Push Model Architecture](./docs/assets/gitops-push-vs-pull.jpg)
 
 #### Pull-based Model
 
