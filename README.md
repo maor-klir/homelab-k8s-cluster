@@ -1,239 +1,99 @@
-# 🏡☸️ homelab-kubernetes-cluster
-
-## 📖 Introduction 
+# 🏡☸️ homelab-k8s-cluster
 
 This GitHub repository contains all the documentation and configuration of my first self-hosted homelab Kubernetes environment implemented through [GitOps principles](https://opengitops.dev/) and powered by K3s, Flux, and Cilium.
+Infrastructure provisioning and lifecycle management is handled through HCP Terraform and cloud-init.
+Manual steps on bootstrapping the environment are kept to a minimum to assure a declarative, predictable, and consistent deployment.
 
----
+A second self-hosted Kubernetes environment with a slightly different configuration can be seen [here](https://github.com/maor-klir/homelab-k8s-cluster-2).
 
-## 🚧 Currently under heavy construction 🚧
+## 📖 Introduction
 
-I'm working on reshaping the entire structure and environment setup.
-This entails: 
-- switching from hosting on discrete bare metal small-form-factor mini PCs to rather provisioning nodes as VMs on a highly available Proxmox VE cluster
-- creating two Kubernetes clusters - `k3s-test` and `k3s-staging`
-- automating image creation and nodes deployment with Packer and Terraform
-- using Cilium as my go-to CNI and utilizing its Gateway API controller and L2 announcements capabilities
+This Kubernetes environment was first and foremost conceived for learning purposes and improving my proficiency level on all related domains.
+It all boils down to knowing how to handle such an equivalent environment in production, running business-critical workloads.
+With that in mind, I treat this project with great care and attention to details.
+This mindset forces me to take into account security, identity, scalability, and recovery/rollback strategies and adhere to the respected domain industry's best practices when provisioning different environments and maintaining the deployed workloads.
 
----
-
-The purpose of this repository is first and foremost learning how to handle such equivalent environment in production running business-critical workloads.
-And such, I treat this project with great care and attention to details.
-
-Having that in mind, forces me to take into account security, scalability, and backup strategies and adhere to industry's best practices when provisioning different environments and maintaining the running workloads. 
-
-Self-hosting also drives one to be accountable and responsible to take care of the ease of deployment and maintenance opreations over time, in other words - settings up proper automation and applying improvements as the environment matures and thickens. 
-
-That is where the GitOps operational framework kicks in and shines.
-
-- [:house::wheel\_of\_dharma: homelab-kubernetes-cluster](#housewheel_of_dharma-homelab-kubernetes-cluster)
-  - [Introduction](#introduction)
-  - [GitOps](#gitops)
-    - [Pull vs. Push Architecture](#pull-vs-push-architecture)
-      - [Pull-based Model](#pull-based-model)
-      - [Push-based Model](#push-based-model)
-    - [OpenGitOps](#opengitops)
-      - [Key Takeaways](#key-takeaways)
-  - [Selecting a Kubernetes Distribution](#selecting-a-kubernetes-distribution)
-    - [K3s](#k3s)
-    - [Talos Linux](#talos-linux)
-  - [Flux](#flux)
-  - [Secrets Management](#secrets-management)
-  - [Enable Extrenal Access with Cloudflare Tunnels](#enable-extrenal-access-with-cloudflare-tunnels)
-  - [Automated K3s Cluster Upgrades](#automated-k3s-cluster-upgrades)
-  - [Automated Image Updates](#automated-image-updates)
-  - [Monitoring](#monitoring)
-  - [Hardware](#hardware)
-      - [Staging Cluster](#staging-cluster)
-      - [Production Cluster](#production-cluster)
-  - [Current Workloads](#current-workloads)
-      - [Applications](#applications)
-      - [Monitoring](#monitoring-1)
-      - [Automated Image Updates](#automated-image-updates-1)
-      - [Automated K3s Cluster Upgrades](#automated-k3s-cluster-upgrades-1)
-
-
-## GitOps
-
-GitOps is a set of best practices where the entire code delivery process is controlled via a distributed Version Control System (VCS), most commonly Git. 
-It applies to infrastructure and application code alike. It enables full automation that involves rapid updates and rollbacks.
-
-### Pull vs. Push Model Architecture 
-
-It is important to mention that the GitOps methodology has two models in which it can operate and apply changes to the cluster environment: pull-based model and push-based model.
-
-![Pull vs. Push Model Architecture](./docs/assests/gitops-push-vs-pull.jpg)
-
-#### Pull-based Model
-
-In the pull-based model, a GitOps operator is continuously monitoring the desired state in a version-controlled Git repository for changes. 
-When changes are detected, the operator fetches the updated configuration from the repository and applies it to the target environment.
-
-It offers better control and governanace, easier auditing and compliance, and enables self-servicing the target environment by simply updating the codebase.
-
-Industry standard tools include Argo CD and Flux.
-
-#### Push-based Model
-
-In the push-based model, changes are pushed directly from the Git repository to the target environment, typically as a part of a CI/CD pipeline. 
-When changes are committed to the Git repository, the CI/CD pipeline triggers a deployment process that pushes the updated configuration to the target environment.
-
-It offers simplicity and generally faster deployments in comparisson to a pull-based model but on the down side, changes may be less predictable, harder to audit, and implementation usually requires explicitly defining and maintaining the deployment logic within the CI/CD pipeline configuration, which can involve custom automation scripts or detailed step definitions.
-
-Industry standard tools include GitHub Actions, GitLab CI, and Jenkins.
-
-### OpenGitOps
-
-The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is following the pull-based model GitOps methodology and has defined its principles as follows:
-
-[GitOps Principles](https://opengitops.dev/):
-
-1. Declarative - A system managed by GitOps must have its desired state expressed declaratively.
-2. Versioned and Immutable - Desired state is stored in a way that enforces immutability, versioning and retains a complete version history.
-3. Pulled Automatically - Software agents automatically pull the desired state declarations from the source (Reconciliation Loop).
-4. Continuously Reconciled - Software agents continuously observe actual system state and attempt to apply the desired state.
-
-**In other words:**
-
-- The entire system (infrastructure and applications alike) is described declaratively.
-- The canonical desired system state is version controlled via Git.
-- Approved changes (through a Pull Request) are automated and applied to the system.
-- Software agents ensure correctness and alert upon recognizing drift from the desired state.
-
-**It also highlights:**
-
-- Transparency -  viewing Git commit history is public accessible and transparent to all
-- Collaboration - the codebase can be shared across teams enabling joint projects
-- Security hardening - Kubernetes API server access is not required since the changes are initiated from the remote Git codebase
-- Ease of Rollbacks - changing back to a previous state can be applied easily by reverting to an older commit in the Git codebase.
-
-#### Key Takeaways
-
-1. The state of the cluster is always described in Git (infrastructure and application source code alike) 
-2. There is no external system who has full access permissions to the cluster. The cluster polls the Git code base for changes and will pull changes and deployment information.
-3. The GitOps controller is running in an endless loop (a reconciliation loop) and wishes to always match the Git codebase state with the cluster state.
-4. An approval process can be implemented to apply a change made to the repository codebase via a pull request (PR) and subsequently  merging to the main branch.
-
-**In my homelab I chose to go with a pull-based model, and specifically, with [Flux](https://fluxcd.io/) (commonly known as Flux CD)** 
-
-
-## Selecting a Kubernetes Distribution
-
-We want to strike a balance, a sweet spot if you will, between being able to easily install and configure settings manually and having the ability to add modular configurable options. Between being able to experiment and on the other hand, easily maintain the cluster in the long term.
-
-On top of that, we want to choose a Kubernetes distribution that is: 
-- Stable and is able of running applications in a persistent manner
-- Not bundled with add-ons. Not a vendor-locked opinionated way of handling extensions (a good example is Canonical's [MicroK8s](https://microk8s.io/))
-
-**I opted for installing [K3s](https://k3s.io/) on an [Ubuntu Server](https://ubuntu.com/download/server) as my initial iteration.**
-
-My next iteration will include security hardening of the cluster by transitioning to [Talos Linux](https://www.talos.dev/).
-
-**[EDIT]:** I chose to stick to K3s for this environment and am exploring Talos Linux on my second Kubernetes environment - [homelab-k8s-cluster-2](https://github.com/maor-klir/homelab-k8s-cluster-2)
-
-Here is a brief overview of the two aforementioned distributions:
-
-### K3s
-
-[K3s](https://k3s.io/) runs as single binary on the Linux operating system. This means it reduces dependencies and steps needed for installation, hence eases its bootstrapping process significantly. 
-It strikes the perfect balance between easy installation and modular configurable options.
-
-K3s also powers Rancher (by SUSE) - an enterprise Kubernetes management platform (can be referred as Kubernetes-as-a-Service).
-With Rancher you can deploy and manage multiple K8s clusters at scale - from datacenter to cloud to edge.
-
-### Talos Linux
-
-[Talos Linux](https://www.talos.dev/) is a production-grade hardened Kubernetes distribution that is secure, immutable (the root filesystem is mounted as read-only), and minimal.
-Talos Linux also removes host-level such as a Shell and SSH. 
-
-All system management is done via an API, secured with Mutual TLS.
-Talos abstracts some of K8s settings from the maintainer of the cluster.
-
-## Flux
-
-[Flux](https://fluxcd.io/) (commonly known as Flux CD) is an industry standard pull-based model GitOps tool.
-As mentioned before, I chose to fully commit to Flux while setting up this homelab.
-
-I opted for the [Monorepo](https://fluxcd.io/flux/guides/repository-structure/#monorepo) repository structure.
-In a monorepo approach you would store all your Kubernetes manifests in a single Git repository. The various environments specific configs are all stored in the same branch (e.g. `main`).
-
-My implementation utilizes a Gitops workflow for multiple environments using Kustomize overlays and Helm deployed as CRDs through the Flux operator.
-
-It it based on this example: [flux2-kustomize-helm-example](https://github.com/fluxcd/flux2-kustomize-helm-example)
-
-## Secrets Management
-
-Flux has the ability to decrypt secrets stored in Flux sources by itself, without the need of additional controllers installed in the cluster. 
-The approach relies on keeping in Flux sources encrypted Kubernetes Secrets, which are decrypted on-demand with [SOPS](https://github.com/mozilla/sops), just before they are deployed into the target clusters.
-
-Since it is an out-of-the-box option offered by Flux, I chose to initially utilize SOPS and probably later on move to a cloud-based offering secrets management tool such as Azure Key Vault or AWS Secrets Manager.
-
-Flux [recommends](https://fluxcd.io/flux/guides/mozilla-sops/#encrypting-secrets-using-age) combining SOPS with [age](https://github.com/FiloSottile/age) for encrypting secrets. 
-
-
-## Enable Extrenal Access with Cloudflare Tunnels
-
-A [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) enables us to reach our deployed applications from the internet without compromising security as a lightweight daemon (cloudflared) deployed on our cluster creates outbound-only connections to Cloudflare's global network.
-
-This functionality integrates flawlessly with managing DNS records on registered domains in Cloudflare Registrar (or transfered from another Domain Registrar).  
-
-An elegant and relatively simple deployable solution.  
-
-## Automated K3s Cluster Upgrades
-
-We can manage our K3s nodes upgrades using Rancher's [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller).
-
-It is a Kubernetes-native approach to cluster upgrades.
-It leverages a custom resource definition (CRD), a plan custom resource, and a [controller](https://kubernetes.io/docs/concepts/architecture/controller/).
-
-More details can be found here: [Automated Upgrades](https://docs.k3s.io/upgrades/automated)
-
-## Automated Image Updates
-
-We would like to automate the process of scanning our deployed applications for available updates and
-implement a workflow that will apply the changes to the latest version.
-
-[Renovate](https://github.com/renovatebot/renovate) can help us with that task:
-
-- Renovate will constantly check (in a predefined schedule) for new available images of our running containers in the cluster.
-- Upon discovering that a new image version is available, it will create a pull request pending our approval.
-- Renovate also offers us a rich overview of the release notes and further valuable details as part of the pull request.
-
-## Monitoring
-
-Obseravbilty tools are essential and highly important when provisioning and maintaining any modern environment.
-
-The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is a widely-used tool, if not the defacto industry standard Kubernetes observabilty solution that is mostly recognized and adopted.
+Secondly, I plan to self-host some applications for personal usage.
+Self-hosting also drives one to be accountable and responsible to take care of the ease of deployment and maintenance operations over time, in other words - settings up proper automation and applying improvements as the environment matures and thickens.
+That is where GitOps methodologies come into play and provide the necessary structure to treat infrastructure definition as the single source of truth, ensuring that every change is versioned, auditable, and automatically reconciled against the actual environment state. More on that can be viewed [here](docs/gitops.md).
 
 ## 🏗️ Underlying Infrastructure
 
-My current hardware setup includes:
+I started out my journey hosting Kubernetes nodes on bare metal, where each node was provisioned onto a single HP EliteDesk 800 G2 DM mini PC.
+Later on I have decided to transition to provisioning each node as a separate VM on a Proxmox VE highly available cluster.
+With that shift, I have also upgraded the host machines to a 3-node HP EliteDesk 800 G4 DM 35W mini PCs (Intel Core i5-8500T (6c/6t) / 32GB RAM / 256GB SSD NVMe).
 
-#### Staging Cluster
+This approach enables me to provision and bootstrap clusters more quickly, easily, and with less overhead through HCP Terraform and cloud-init, eliminating manual configuration steps and ensuring consistent, reproducible deployments across environments.
 
-Intended to serve as a playground for testing workloads, databases, secrets managements, and various toolings prior deploying to production.
+## ⚙️ Core Components and Key Features
 
-- master-node-1: HP ProBook 650 G5 - Intel Core i5-8265U / 16GB RAM / 256GB SSD NVMe 
+- [K3s](https://k3s.io/): a highly available, certified Kubernetes distribution designed for production workloads in unattended, resource-constrained, remote locations or inside IoT appliances.
+  K3s is packaged as a single binary that reduces the dependencies and steps needed to install, run, and auto-update a production Kubernetes cluster.
+- [Flux](https://fluxcd.io/): a tool that follows [GitOps principles](https://opengitops.dev/#principles) for keeping Kubernetes clusters in sync with sources of configuration (like Git repositories), and automating updates to configuration when there is new code to deploy
+- [Cilium](https://cilium.io): an eBPF-based networking, observability, and security solution for Kubernetes. Cilium serves as the cluster's [CNI](https://www.cni.dev) and [Gateway API controller](https://gateway-api.sigs.k8s.io/)
+- [Local Path Provisioner](https://github.com/rancher/local-path-provisioner): dynamically provision persistent local storage with Kubernetes
+- [cert-manager](https://cert-manager.io/): cloud-native certificate management for Kubernetes
+- [External Secrets Operator](https://external-secrets.io/latest/): a Kubernetes operator that integrates external secret management systems (in this specific case, Azure Key Vault)
+- [Azure Workload Identity Federation with OpenID Connect (OIDC)](https://azure.github.io/azure-workload-identity/docs/introduction.html) - enables workloads deployed on the Kubernetes cluster a secure access to Azure resources without the maintenance burden of manually managing credentials. The Kubernetes cluster serves as the OIDC tokens issuer. This modern practice eliminates the risk of leaking long-lived secrets stored within the cluster or having certificates expire
+- [Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) - a secure way to reach our deployed applications from the internet without compromising security as a lightweight daemon (`cloudflared`) deployed on the cluster creates outbound-only connections to Cloudflare's global network
+- [Automated K3s cluster upgrade](https://docs.k3s.io/upgrades/automated): a Kubernetes-native approach to cluster upgrades. Leverages a custom Kubernetes [controller](https://github.com/rancher/system-upgrade-controller) and [Custom Resource](https://docs.k3s.io/upgrades/automated#configuration) to declaratively describe what nodes to upgrade, and to what version
+- [Mend Renovate](https://github.com/renovatebot/renovate): Automated dependency updates. Renovate automatically identifies outdated dependencies and creates pull requests to ensure that container images (Helm releases are also supported) are always current
 
-#### Production Cluster
+## 🔁 Infrastructure Lifecycle Management
 
-...in the making...
+### Build `-->` Deploy `-->` Manage
 
-## 📦 Current Workloads
+The K3s environment relies on infrastructure provisioning and management through HCP Terraform and cloud-init.
+Since all infrastructure is being provisioned on a Proxmox VE cluster that has no publicly accessible endpoint, i.e., an isolated private environment, an HCP Terraform agent must be present and running on the private network (I opted for a binary running on a small-sized VM).
+General considerations and implementation specifics can be seen [here](docs/hcp-terraform-agents.md).
 
-#### Applications
+An overview of all the features I am utilizing:
 
-- [linkding](https://github.com/sissbruecker/linkding) - a self-hosted bookmarks manager
-- [Audiobookshelf](https://github.com/advplyr/audiobookshelf) - a self-hosted audiobook and podcast server
+- [**HCP Terraform**](https://developer.hashicorp.com/terraform/cloud-docs) is a hosted service that helps to manage Terraform runs in a consistent and reliable environment.
+  It is a modern way that facilitates the management of shared Terraform state and secret data.
+  Terraform runs managed by HCP Terraform are called _remote operations._ Remote runs can be initiated by webhooks from a VCS provider, by UI controls within HCP Terraform, by API calls, or by Terraform CLI.
+  When using Terraform CLI to perform remote operations, the progress of the run is streamed to the user's terminal, to provide an experience equivalent to local operations.
 
-#### Monitoring
+- [**HCP Terraform Agents**](https://developer.hashicorp.com/terraform/cloud-docs/agents) let us manage isolated, private, or on-premises infrastructure while keeping our network secure.
+  By deploying lightweight self-hosted agents within a specific network segment, we can establish a simple connection between our environment and HCP Terraform, facilitating provisioning and management operations.
+  The agent requires only outbound connectivity to HCP Terraform, enabling private networks to remain secure. No special networking configuration or exceptions are typically needed.
 
-- [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+- [**Dynamic provider credentials**](https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials) improve our security posture by letting us provision new, temporary credentials for every Terraform run.
+  A trust relationship between our cloud platform(s) and HCP Terraform is configured.
+  As part of that process, we can define rules that let HCP Terraform workspaces and runs access specific resources on the specific cloud platform.
 
-#### Automated Image Updates
+- [**Terraform Workload Identity**](https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/workload-identity-tokens) is the mechanism that powers _dynamic provider credentials_.
+  It allows HCP Terraform to present information about a Terraform workload to an external system – like its workspace, organization, or whether it’s a plan or apply – and allows other external systems to verify that the information is accurate.
+  This workflow is built on the [OpenID Connect protocol](https://openid.net/connect/), a trusted standard for verifying identity across different systems.
 
-- [Renovate](https://github.com/renovatebot/renovate)
+## 📊 Monitoring
 
-#### Automated K3s Cluster Upgrades
+Observability tools are essential and highly important when provisioning and maintaining any modern environment.
+The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is deployed as the cluster's monitoring solution, providing comprehensive metrics collection, visualization, and alerting capabilities.
 
-- [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller)
+The stack includes:
+- [Prometheus](https://prometheus.io/) - metrics collection and storage with 30-day retention and 50Gi persistent storage
+- [Grafana](https://grafana.com/) - visualization dashboards with unified alerting for alert management and notifications
+- [Kube-State-Metrics](https://github.com/kubernetes/kube-state-metrics) - generates metrics about Kubernetes object states
+- [Node Exporter](https://github.com/prometheus/node_exporter) - exposes hardware and OS-level metrics from cluster nodes
+- [Grafana Alerting](https://grafana.com/docs/grafana/latest/alerting/) - unified alerting system for alert management and delivery, replacing the traditional Prometheus Alertmanager
+
+Both Prometheus and Grafana are configured with persistent storage and resource constraints to ensure reliable long-term operation.
+
+## 📦 Deployed Applications
+
+- [linkding](https://github.com/sissbruecker/linkding) - a self-hosted bookmark manager that is designed to be minimal, fast, and easy to set up
+- [Audiobookshelf](https://github.com/advplyr/audiobookshelf) - a self-hosted audiobook and podcast server
+
+## 🗺️ Current Environments
+
+- `k3s-staging` - a 3-node cluster, where all testing and exploration is being made
+
+Currently there is only one sole Kubernetes cluster provisioned where all testing and exploration is being made.
+(a change to two separate environments is planned and pending - `staging` and `prod`)
+
+This change will represent a real life scenario where (at least) two separate clusters (environments) are present, allowing for testing and exploration on one, while the other environment will host a production environment for running stable and reliable workloads, only promoted after proper testing.
+
+---
+
+**Note**: This documentation is a working document and will be updated to reflect the ongoing development of the cluster.
