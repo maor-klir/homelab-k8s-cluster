@@ -103,7 +103,7 @@ resource "azurerm_role_assignment" "azwi_kv_secrets_user_role_assignment" {
 
 # Federated identity credential - allows Kubernetes service account to authenticate as this Azure identity
 resource "azuread_application_federated_identity_credential" "azwi_federated_credential" {
-  application_id = azuread_application.azwi_application.id
+  application_id = "/applications/${azuread_application.azwi_application.object_id}"
   display_name   = "kubernetes-federated-credential"
   description    = "Kubernetes service account federated credential"
   audiences      = ["api://AzureADTokenExchange"]
