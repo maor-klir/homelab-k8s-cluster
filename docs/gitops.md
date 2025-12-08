@@ -97,7 +97,7 @@ Here is a brief overview of the two aforementioned distributions:
 
 ### K3s
 
-[K3s](https://k3s.io/) runs as single binary on the Linux operating system. This means it reduces dependencies and steps needed for installation, hence eases its bootstrapping process significantly. 
+[K3s](https://k3s.io/) is packaged as a single binary that reduces the dependencies and steps needed to install, run, and auto-update a production Kubernetes cluster.
 It strikes the perfect balance between easy installation and modular configurable options.
 
 K3s also powers Rancher (by SUSE) - an enterprise Kubernetes management platform (can be referred as Kubernetes-as-a-Service).
@@ -125,8 +125,8 @@ It it based on this example: [flux2-kustomize-helm-example](https://github.com/f
 
 Flux natively integrates with SOPS through its Kustomize controller, enabling the secure storage and management of encrypted secrets within the Git repository in a GitOps workflow.  
 The core of this integration is that the Flux Kustomize controller is capable of in-cluster decryption of SOPS-encrypted Kubernetes Secrets resources.  
+Flux [recommends](https://fluxcd.io/flux/guides/mozilla-sops/#encrypting-secrets-using-age) combining SOPS with [age](https://github.com/FiloSottile/age) for encrypting secrets.  
 Since it is an out-of-the-box option offered by Flux, I chose to initially utilize SOPS upon bootstrapping the cluster before moving to External Secrets Operator along with Azure Workload Identity (OIDC integration) and Azure Key Vault.  
-Flux [recommends](https://fluxcd.io/flux/guides/mozilla-sops/#encrypting-secrets-using-age) combining SOPS with [age](https://github.com/FiloSottile/age) for encrypting secrets. 
 
 ## Enable External Access with Cloudflare Tunnels
 
