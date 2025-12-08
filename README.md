@@ -27,21 +27,21 @@ This approach enables me to provision and bootstrap clusters more quickly, easil
 
 ## ⚙️ Core Components and Key Features
 
-- [K3s](https://k3s.io/): a highly available, certified Kubernetes distribution designed for production workloads in unattended, resource-constrained, remote locations or inside IoT appliances.  
-  K3s is packaged as a single binary that reduces the dependencies and steps needed to install, run, and auto-update a production Kubernetes cluster.
+- [K3s](https://k3s.io/): a highly available, certified Kubernetes distribution designed for production workloads in unattended, resource-constrained, remote locations or inside IoT appliances
 - [Flux](https://fluxcd.io/): a tool that follows [GitOps principles](https://opengitops.dev/#principles) for keeping Kubernetes clusters in sync with sources of configuration (like Git repositories), and automating updates to configuration when there is new code to deploy
 - [Cilium](https://cilium.io): an eBPF-based networking, observability, and security solution for Kubernetes. Cilium serves as the cluster's [CNI](https://www.cni.dev) and [Gateway API controller](https://gateway-api.sigs.k8s.io/)
 - [Local Path Provisioner](https://github.com/rancher/local-path-provisioner): dynamically provision persistent local storage with Kubernetes
 - [cert-manager](https://cert-manager.io/): cloud-native certificate management for Kubernetes
 - [External Secrets Operator](https://external-secrets.io/latest/): a Kubernetes operator that integrates external secret management systems (in this specific case, Azure Key Vault)
-- [Azure Workload Identity Federation with OpenID Connect (OIDC)](https://azure.github.io/azure-workload-identity/docs/introduction.html) - enables workloads deployed on the Kubernetes cluster a secure access to Azure resources without the maintenance burden of manually managing credentials. The Kubernetes cluster serves as the OIDC tokens issuer. This modern practice eliminates the risk of leaking long-lived secrets stored within the cluster or having certificates expire
-- [Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) - a secure way to reach our deployed applications from the internet without compromising security as a lightweight daemon (`cloudflared`) deployed on the cluster creates outbound-only connections to Cloudflare's global network
+- [ExternalDNS](https://kubernetes-sigs.github.io/external-dns/latest): control DNS records dynamically via Kubernetes resources in a DNS provider-agnostic way (only Cloudflare in my case)
+- [Azure Workload Identity Federation with OpenID Connect (OIDC)](https://azure.github.io/azure-workload-identity/docs/introduction.html): enables workloads deployed on the Kubernetes cluster a secure access to Azure resources without the maintenance burden of manually managing credentials. The Kubernetes cluster serves as the OIDC tokens issuer. This modern practice eliminates the risk of leaking long-lived secrets stored within the cluster or having certificates expire
+- [Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/): a secure way to reach our deployed applications from the internet without compromising security as a lightweight daemon (`cloudflared`) deployed on the cluster creates outbound-only connections to Cloudflare's global network
 - [Automated K3s cluster upgrade](https://docs.k3s.io/upgrades/automated): a Kubernetes-native approach to cluster upgrades. Leverages a custom Kubernetes [controller](https://github.com/rancher/system-upgrade-controller) and [Custom Resource](https://docs.k3s.io/upgrades/automated#configuration) to declaratively describe what nodes to upgrade, and to what version
 - [Mend Renovate](https://github.com/renovatebot/renovate): Automated dependency updates. Renovate automatically identifies outdated dependencies and creates pull requests to ensure that container images (Helm releases are also supported) are always current 
 
 ## 🔁 Infrastructure Lifecycle Management
 
-### Build `-->` Deploy `-->` Manage
+### Build --> Deploy --> Manage
 
 The K3s environment relies on infrastructure provisioning and management through HCP Terraform and cloud-init.  
 Since all infrastructure is being provisioned on a Proxmox VE cluster that has no publicly accessible endpoint, i.e., an isolated private environment, an HCP Terraform agent must be present and running on the private network (I opted for a binary running on a small-sized VM).  
