@@ -64,9 +64,9 @@ resource "azurerm_storage_blob" "jwks_document" {
   content_type           = "application/jwk-set+json"
 }
 
-################################################################################################
+############################################################################################################
 ### Set up Azure Workload Identity to acquire an Entra ID token to access a secret in an Azure Key Vault ###
-################################################################################################
+############################################################################################################
 
 resource "azurerm_resource_group" "azwi_rg" {
   name     = var.azwi_rg

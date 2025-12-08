@@ -7,3 +7,4 @@ resources:
   - external-secrets-operator/
   - renovate/
   - system-upgrade-controller/
+  - external-dns/
