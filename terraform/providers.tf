@@ -17,14 +17,6 @@ terraform {
       source  = "hashicorp/azuread"
       version = ">=3.7.0"
     }
-    tfe = {
-      source  = "hashicorp/tfe"
-      version = ">=0.71.0"
-    }
-    time = {
-      source  = "hashicorp/time"
-      version = ">=0.12.0"
-    }
   }
 
   cloud {
@@ -50,14 +42,5 @@ provider "azurerm" {
   features {}
 }
 
-provider "azurerm" {
-  alias           = "maors-dev-env"
-  subscription_id = var.azure_subscription_id
-  features {}
-}
-
 provider "azuread" {
-}
-
-provider "tfe" {
 }
