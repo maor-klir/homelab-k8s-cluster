@@ -1,7 +1,7 @@
 # Why choose Cilium?
 
 Selecting Cilium as the CNI for a Kubernetes cluster is the preferred choice for environments requiring high-performance, granular security, and integrated observability.  
-Cilium leverages modern eBPF (extended Berkeley Packet Filter) technology to deliver a unified, high-performance networking, and security platform.
+Cilium leverages modern eBPF (extended Berkeley Packet Filter) technology to deliver a unified, high-performance networking and security platform.
 
 ## Performance and efficiency (eBPF)
 
