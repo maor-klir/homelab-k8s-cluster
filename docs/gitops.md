@@ -71,7 +71,7 @@ The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is
 ### Key Takeaways
 
 1. The state of the cluster is always described in Git (infrastructure and application source code alike).
-2. There is no external system who has full access permissions to the cluster. The cluster polls the Git code base for changes and will pull changes and deployment information.
+2. There is no external system that has full access permissions to the cluster. The cluster polls the Git code base for changes and will pull changes and deployment information.
 3. The GitOps controller is running in an endless loop (a reconciliation loop) and wishes to always match the Git codebase state with the cluster state.
 4. An approval process can be implemented to apply a change made to the repository codebase via a pull request (PR) and subsequently  merging to the main branch.
 
