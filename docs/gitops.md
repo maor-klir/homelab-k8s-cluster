@@ -4,15 +4,15 @@ GitOps is a way of implementing Continuous Deployment for cloud native applicati
 It focuses on a developer-centric experience when operating infrastructure, by using tools developers are already familiar with, including Git and Continuous Deployment tools.  
 The core idea of GitOps is having a distributed Version Control System (VCS), most commonly Git, that always contains declarative descriptions of the infrastructure currently desired in the production environment and an automated process to make the production environment match the described state in the repository. It enables full automation that involves rapid updates and rollbacks.  
 
-### Pull vs. Push Model Architecture 
+## Pull vs. Push Model Architecture
 
 It is important to mention that the GitOps methodology has two models in which it can operate and apply changes to the cluster environment: a _pull-based_ model and a _push-based_ model.
 
 ![Pull vs. Push Model Architecture](./assets/gitops-push-vs-pull.jpg)
 
-#### Pull-based Model
+### Pull-based Model
 
-In the pull-based model, a GitOps operator continuously monitors the desired state in a version-controlled Git repository for changes. 
+In the pull-based model, a GitOps operator continuously monitors the desired state in a version-controlled Git repository for changes.  
 When changes are detected, the operator fetches the updated configuration from the repository and applies it to the target environment.
 
 **Advantages:**
@@ -24,9 +24,9 @@ When changes are detected, the operator fetches the updated configuration from t
 
 **Purpose-built tools:** Argo CD, Flux
 
-#### Push-based Model
+### Push-based Model
 
-In the push-based model, changes are pushed directly from the Git repository to the target environment, typically as part of a CI/CD pipeline. 
+In the push-based model, changes are pushed directly from the Git repository to the target environment, typically as part of a CI/CD pipeline.  
 When changes are committed to the Git repository, the CI/CD pipeline triggers a deployment process that pushes the updated configuration to the target environment.
 
 **Advantages:**
@@ -41,10 +41,9 @@ When changes are committed to the Git repository, the CI/CD pipeline triggers a 
 - Changes may be less predictable and harder to audit
 - Requires explicitly defining and maintaining deployment logic within the CI/CD pipeline configuration
 
-
 **Common implementation:** CI/CD platforms like GitHub Actions, GitLab CI, Jenkins, or CircleCI configured to execute deployment commands directly
 
-### OpenGitOps
+## OpenGitOps
 
 The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is following the pull-based GitOps model and has defined its principles as follows:  
 
@@ -69,23 +68,23 @@ The [OpenGitOps CNCF Sandbox project](https://github.com/open-gitops/project) is
 - Security hardening - Kubernetes API server access is not required since the changes are initiated from the remote Git codebase
 - Ease of Rollbacks - changing back to a previous state can be applied easily by reverting to an older commit in the Git codebase.
 
-#### Key Takeaways
+### Key Takeaways
 
-1. The state of the cluster is always described in Git (infrastructure and application source code alike) 
-2. There is no external system who has full access permissions to the cluster. The cluster polls the Git code base for changes and will pull changes and deployment information.
+1. The state of the cluster is always described in Git (infrastructure and application source code alike).
+2. There is no external system that has full access permissions to the cluster. The cluster polls the Git code base for changes and will pull changes and deployment information.
 3. The GitOps controller is running in an endless loop (a reconciliation loop) and wishes to always match the Git codebase state with the cluster state.
 4. An approval process can be implemented to apply a change made to the repository codebase via a pull request (PR) and subsequently  merging to the main branch.
 
-**In my homelab I chose to go with a pull-based model, and specifically, with [Flux](https://fluxcd.io/) (commonly known as Flux CD)** 
-
+**In this particular homelab environment I chose to go with a pull-based model, and specifically, with [Flux](https://fluxcd.io/) (commonly known as Flux CD)**
 
 ## Selecting a Kubernetes Distribution
 
 We want to strike a balance, a sweet spot if you will, between being able to easily install and configure settings manually and having the ability to add modular configurable options.  
 Between being able to experiment and on the other hand, easily maintain the cluster in the long term.  
 
-On top of that, we want to choose a Kubernetes distribution that is: 
-- Stable and is able of running applications in a persistent manner
+On top of that, we want to choose a Kubernetes distribution that is:
+
+- Stable and is able to run applications in a persistent manner
 - Not bundled with add-ons. Not a vendor-locked opinionated way of handling extensions (a good example is Canonical's [MicroK8s](https://microk8s.io/))
 
 **I opted for installing [K3s](https://k3s.io/) on an [Ubuntu Server](https://ubuntu.com/download/server) as my initial iteration.**  
@@ -106,7 +105,7 @@ With Rancher you can deploy and manage multiple K8s clusters at scale - from dat
 ### Talos Linux
 
 [Talos Linux](https://www.talos.dev/) is a production-grade hardened Kubernetes distribution that is secure, immutable (the root filesystem is mounted as read-only), and minimal.
-Talos Linux also removes host-level such as a Shell and SSH. 
+Talos Linux also removes traditional host-level access by eliminating SSH access.  
 
 All system management is done via an API, secured with Mutual TLS.
 Talos abstracts some of K8s settings from the maintainer of the cluster.
@@ -121,7 +120,7 @@ In a monorepo approach you would store all your Kubernetes manifests in a single
 My implementation utilizes a GitOps workflow for multiple environments using Kustomize overlays and Helm deployed as CRDs through the Flux operator.  
 It it based on this example: [flux2-kustomize-helm-example](https://github.com/fluxcd/flux2-kustomize-helm-example)
 
-## Secrets Management upon Bootstrapping the Cluster 
+## Secrets Management upon Bootstrapping the Cluster
 
 Flux natively integrates with SOPS through its Kustomize controller, enabling the secure storage and management of encrypted secrets within the Git repository in a GitOps workflow.  
 The core of this integration is that the Flux Kustomize controller is capable of in-cluster decryption of SOPS-encrypted Kubernetes Secrets resources.  
@@ -132,4 +131,4 @@ Since it is an out-of-the-box option offered by Flux, I chose to initially utili
 
 A [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) enables us to reach our deployed applications from the internet without compromising security as a lightweight daemon (`cloudflared`) deployed on our cluster creates outbound-only connections to Cloudflare's global network.  
 This functionality integrates flawlessly with managing DNS records on registered domains in Cloudflare Registrar (or transferred from another Domain Registrar).  
-It is an elegant and relatively simple deployable solution.  
+It is an elegant and relatively simple deployable solution.

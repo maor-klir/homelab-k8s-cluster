@@ -2,7 +2,8 @@
 
 This GitHub repository contains all the documentation and configuration of my first self-hosted homelab Kubernetes environment implemented through [GitOps principles](https://opengitops.dev/) and powered by K3s, Flux, and Cilium.  
 Infrastructure provisioning and lifecycle management is handled through HCP Terraform and cloud-init.  
-Manual steps on bootstrapping the environment are kept to a minimum to assure a declarative, predictable, and consistent deployment.
+Manual steps on bootstrapping the environment are kept to a minimum to assure a declarative, predictable, and consistent deployment.  
+The reasoning behind selecting Cilium as a CNI can be seen [here](docs/cilium.md).
 
 A second self-hosted Kubernetes environment with a slightly different configuration can be seen [here](https://github.com/maor-klir/homelab-k8s-cluster-2).
 
@@ -37,7 +38,7 @@ This approach enables me to provision and bootstrap clusters more quickly, easil
 - [Azure Workload Identity Federation with OpenID Connect (OIDC)](https://azure.github.io/azure-workload-identity/docs/introduction.html): enables workloads deployed on the Kubernetes cluster a secure access to Azure resources without the maintenance burden of manually managing credentials. The Kubernetes cluster serves as the OIDC tokens issuer. This modern practice eliminates the risk of leaking long-lived secrets stored within the cluster or having certificates expire
 - [Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/): a secure way to reach our deployed applications from the internet without compromising security as a lightweight daemon (`cloudflared`) deployed on the cluster creates outbound-only connections to Cloudflare's global network
 - [Automated K3s cluster upgrade](https://docs.k3s.io/upgrades/automated): a Kubernetes-native approach to cluster upgrades. Leverages a custom Kubernetes [controller](https://github.com/rancher/system-upgrade-controller) and [Custom Resource](https://docs.k3s.io/upgrades/automated#configuration) to declaratively describe what nodes to upgrade, and to what version
-- [Mend Renovate](https://github.com/renovatebot/renovate): Automated dependency updates. Renovate automatically identifies outdated dependencies and creates pull requests to ensure that container images (Helm releases are also supported) are always current 
+- [Mend Renovate](https://github.com/renovatebot/renovate): Automated dependency updates. Renovate automatically identifies outdated dependencies and creates pull requests to ensure that container images (Helm releases are also supported) are always current
 
 ## 🔁 Infrastructure Lifecycle Management
 
@@ -61,6 +62,8 @@ An overview of all the features I am utilizing:
 - [**Dynamic provider credentials**](https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials) improve our security posture by letting us provision new, temporary credentials for every Terraform run.  
   A trust relationship between our cloud platform(s) and HCP Terraform is configured.  
   As part of that process, we can define rules that let HCP Terraform workspaces and runs access specific resources on the specific cloud platform.  
+  My implementation follows [HashiCorp's official Azure setup example](https://github.com/hashicorp/terraform-dynamic-credentials-setup-examples/blob/main/azure/azure.tf), extended with additional Azure and Entra ID role assignments.  
+  These assignments enable Terraform to assign roles to provisioned resources and manage Entra ID applications and service principals.
 
 - [**Terraform Workload Identity**](https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/workload-identity-tokens) is the mechanism that powers _dynamic provider credentials_.  
   It allows HCP Terraform to present information about a Terraform workload to an external system – like its workspace, organization, or whether it’s a plan or apply – and allows other external systems to verify that the information is accurate.  
@@ -71,7 +74,8 @@ An overview of all the features I am utilizing:
 Observability tools are essential and highly important when provisioning and maintaining any modern environment.  
 The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is deployed as the cluster's monitoring solution, providing comprehensive metrics collection, visualization, and alerting capabilities.  
 
-The stack includes:  
+The stack includes:
+
 - [Prometheus](https://prometheus.io/) - metrics collection and storage with 30-day retention and 50Gi persistent storage
 - [Grafana](https://grafana.com/) - visualization dashboards with unified alerting for alert management and notifications
 - [Kube-State-Metrics](https://github.com/kubernetes/kube-state-metrics) - generates metrics about Kubernetes object states

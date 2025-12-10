@@ -5,6 +5,8 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
+        # Exclude .md and .markdown files to allow trailing whitespace (used for line breaks in Markdown)
+        exclude: \.(md|markdown)$
       - id: end-of-file-fixer
       - id: check-yaml
         args: [--allow-multiple-documents]

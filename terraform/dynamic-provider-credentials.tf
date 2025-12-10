@@ -9,7 +9,7 @@ data "azuread_client_config" "current" {}
 data "azurerm_subscription" "current" {
 }
 
-# Fetch the Application Administrator role details
+# Fetches the Application Administrator role object ID.
 data "azuread_directory_role_templates" "all_roles" {}
 
 locals {
@@ -35,7 +35,7 @@ resource "azuread_service_principal" "hcpt_service_principal" {
   client_id = azuread_application.hcpt_application.client_id
 }
 
-# Creates role assignments which control the permissions the service
+# Creates a role assignment which controls the permissions the service
 # principal has within the Azure subscription.
 #
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
@@ -46,6 +46,11 @@ resource "azurerm_role_assignment" "hcpt_contributor_role_assignment" {
   skip_service_principal_aad_check = true
 }
 
+# Creates a role assignment to allow Terraform to assign roles to resources it creates.
+# This is required when Terraform provisions resources that need their own role assignments,
+# such as managed identities, storage accounts, or service principals.
+#
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "hcpt_rbac_role_assignment" {
   scope                            = data.azurerm_subscription.current.id
   principal_id                     = azuread_service_principal.hcpt_service_principal.object_id
@@ -53,9 +58,13 @@ resource "azurerm_role_assignment" "hcpt_rbac_role_assignment" {
   skip_service_principal_aad_check = true
 }
 
-# Assign the Entra ID Directory Role
+# Assigns an Entra ID Directory Role to allow managing application registrations
+# and service principals. This is required when Terraform needs to create or manage
+# Entra ID applications and service principals.
+#
+# https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/directory_role_assignment
 resource "azuread_directory_role_assignment" "hcpt_app_admin_assignment" {
-  # The role is assigned at the Tenant/Directory level, so the scope is the root directory '/'
+  # The role is assigned at the tenant/directory level, so the scope is the root directory '/'
   # This argument defaults to '/' if omitted, but it is good practice to include it for clarity.
   directory_scope_id  = "/"
   principal_object_id = azuread_service_principal.hcpt_service_principal.object_id
