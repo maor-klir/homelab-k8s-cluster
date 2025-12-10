@@ -5,11 +5,12 @@ By deploying lightweight agents within a specific network segment, we can establ
 This is useful for on-premises infrastructure, enterprise networking providers, and any systems in a protected enclave.  
 The agent requires only outbound connectivity to HCP Terraform, enabling private networks to remain secure.  No special networking configuration or exceptions are typically needed.
 
-Tutorial: https://developer.hashicorp.com/terraform/tutorials/cloud/cloud-agents
+Tutorial: <https://developer.hashicorp.com/terraform/tutorials/cloud/cloud-agents>
 
 **Note:** HCP Terraform Free Edition includes **one self-hosted agent**.
 
-## General guidelines for the implementation
+## General implementation guidelines
+
 ### Release archive checksum verification
 
 HashiCorp signs all release archives with their GPG key. The following example uses Vault, but the same process applies to any HashiCorp product including `tfc-agent`:
@@ -71,8 +72,7 @@ export TFC_AGENT_NAME=your-agent-name
 
 Once complete, your agent and its status appear on the **Agents** page in the HCP Terraform UI. Workspaces can now use this agent pool for runs.
 
-
-# My implementation
+## My implementation
 
 My implementation includes creating dedicated system user, systemd service file, and environment file.
 
@@ -133,7 +133,6 @@ sudo mkdir -p /var/lib/tfc-agent
 # Set correct ownership for the agent
 sudo chown -R tfc-agent:tfc-agent /var/lib/tfc-agent
 ```
-
 
 ### Create the systemd service file
 
@@ -201,4 +200,4 @@ sudo journalctl -u tfc-agent.service -f
 
 ### HCP Terraform Agent CLI options
 
-https://developer.hashicorp.com/terraform/cloud-docs/agents/agents#cli-options
+<https://developer.hashicorp.com/terraform/cloud-docs/agents/agents#cli-options>
