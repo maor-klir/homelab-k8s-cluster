@@ -84,7 +84,7 @@ Between being able to experiment and on the other hand, easily maintain the clus
 
 On top of that, we want to choose a Kubernetes distribution that is:
 
-- Stable and is able of running applications in a persistent manner
+- Stable and is able to run applications in a persistent manner
 - Not bundled with add-ons. Not a vendor-locked opinionated way of handling extensions (a good example is Canonical's [MicroK8s](https://microk8s.io/))
 
 **I opted for installing [K3s](https://k3s.io/) on an [Ubuntu Server](https://ubuntu.com/download/server) as my initial iteration.**  
