@@ -39,7 +39,7 @@ run_packer_build() {
   echo "Starting Packer build..."
   packer build -force -on-error=ask \
     -var-file=input.pkrvars.hcl .
-  
+
   # Check the exit status of the packer build command
   if [ $? -eq 0 ]; then
     echo "Packer build successful."

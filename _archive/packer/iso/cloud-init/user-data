@@ -5,8 +5,8 @@ autoinstall:
   locale: en_US.UTF-8
   timezone: Europe/Berlin
   keyboard:
-    layout: us    
-  interactive-sections: []  # Explicitly forcing a non-interactive installation   
+    layout: us
+  interactive-sections: []  # Explicitly forcing a non-interactive installation
   identity:
     hostname: ubuntu-server
     username: ubuntu
