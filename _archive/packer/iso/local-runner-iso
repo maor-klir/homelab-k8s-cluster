@@ -36,11 +36,11 @@ packer init .
 echo "Starting Packer build..."
 packer build -force -on-error=ask \
   -var-file=input.pkrvars.hcl .
-  
+
 if [ $? -eq 0 ]; then
   echo "Packer build completed successfully!"
-  return 0 
+  return 0
 else
   echo "Packer build failed!"
-  return 1 
+  return 1
 fi

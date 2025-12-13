@@ -8,13 +8,13 @@ source "proxmox-clone" "k3s" {
   node                     = var.proxmox_node
 
   # The ID of the VM to clone from
-  clone_vm_id = "7000" 
-  
+  clone_vm_id = "7000"
+
   # VM General Settings
   vm_id                = var.vm_id_clone
   vm_name              = "k3s-ubuntu-24.04-template"
   template_description = "K3s on Ubuntu Server 24.04 LTS, built with Packer on ${local.buildtime}"
-  
+
   # cloud-init files
   additional_iso_files {
     type              = "sata"
