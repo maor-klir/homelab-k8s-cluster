@@ -52,6 +52,7 @@ autoinstall:
       - ssh-ed25519 AAAAC3NzaC..6O8tvZobj user@host
     allow-pw: false
 ```
+
 This configuration ensures that not only can Packer connect during the build, but any VM subsequently created from the resulting template will also have SSH access enabled backed in with the specified public key and password authentication disabled, providing a secure and persistent access method.
 
 ## Secrets Handling
@@ -85,16 +86,18 @@ chmod +x local-runner
 ## Cloud-init Configuration Approach
 
 This template creation uses a virtual CD-ROM-based approach for injecting cloud-init configuration data.
+
 - Subiquity is the installer framework handling the Ubuntu Server ISO image ("live server") installation.
-- Subiquity's internal `cloud-init` instance will detect the attached cloud-init configuration data files. 
+- Subiquity's internal `cloud-init` instance will detect the attached cloud-init configuration data files.
 
 This approach offers a few benefits on network-restricted on-premise virtualization platforms like Proxmox VE:
 
 1. Simplicity - as there is no need to fetch the configuration data from a dedicated web server.
-2. Reliability - the configuration data is locally attached to the instantiated VM eliminating possible network connectivity issues. 
+2. Reliability - the configuration data is locally attached to the instantiated VM eliminating possible network connectivity issues.
 3. Security - no eavesdropping is possible as no data is being transferred over any network.
 
 The relevant files are:
+
 - `cloud-init/user-data`: Contains the cloud-init automated directive (autoinstall) containing the desired configuration
 - `cloud-init/meta-data`: Contains cloud-init instance metadata
 
@@ -103,8 +106,8 @@ The relevant files are:
 Customizing the template to different needs can be done by adjusting the following files:
 
 - `cloud-init/user-data`: Contains the cloud-init configuration for automated installation
-- `cloud-init/meta-data`: Contains the cloud-init instance metadata 
-- `source-proxmox-iso.pkr.hcl`: Packer source configuration file 
+- `cloud-init/meta-data`: Contains the cloud-init instance metadata
+- `source-proxmox-iso.pkr.hcl`: Packer source configuration file
 - `build-proxmox-iso.pkr.hcl`: Packer build configuration file
 - `input.pkrvars.hcl`: Input variables file for customization
 - `secrets.pkrvars.hcl`: Sensitive credentials (not committed into version control)

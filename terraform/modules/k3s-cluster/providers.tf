@@ -1,0 +1,18 @@
+terraform {
+  required_version = ">= 1.10.0"
+  required_providers {
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "~> 0.89"
+    }
+  }
+}
+
+provider "proxmox" {
+  insecure = true
+
+  ssh {
+    agent       = false
+    private_key = base64decode(var.private_ssh_key)
+  }
+}

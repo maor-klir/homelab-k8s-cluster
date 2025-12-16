@@ -1,0 +1,4 @@
+reviews:
+  # Disable automatic review on PR creation and commit pushes
+  auto_review:
+    enabled: false

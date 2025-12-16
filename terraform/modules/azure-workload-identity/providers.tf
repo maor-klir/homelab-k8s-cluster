@@ -18,29 +18,4 @@ terraform {
       version = ">=3.7.0"
     }
   }
-
-  cloud {
-    organization = "maor"
-    workspaces {
-      name = "pve-k3s"
-    }
-  }
-}
-
-provider "proxmox" {
-  # Configuration options
-  insecure = true
-
-  ssh {
-    agent       = false
-    private_key = base64decode(var.private_ssh_key)
-  }
-}
-
-provider "azurerm" {
-  subscription_id = var.azure_subscription_id
-  features {}
-}
-
-provider "azuread" {
 }

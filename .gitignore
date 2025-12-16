@@ -1,6 +1,6 @@
 # Terraform provider files
 **/.terraform
-**/.terraform.lock.hcl
+# **/.terraform.lock.hcl
 
 # Terraform variable files
 # **/*.tfvars
