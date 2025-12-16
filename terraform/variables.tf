@@ -1,11 +1,7 @@
 variable "pve_node_name" {
-  description = "The Proxmox Virtual Environment node name where VMs will be created"
-  type        = map(string)
-  default = {
-    node_01 = "pve-01"
-    node_02 = "pve-02"
-    node_03 = "pve-03"
-  }
+  description = "The Proxmox Virtual Environment node names where the VMs will be created"
+  type        = list(string)
+  default     = ["pve-01", "pve-02", "pve-03"]
 }
 
 variable "private_ssh_key" {

@@ -1,5 +1,5 @@
 resource "proxmox_virtual_environment_file" "cloud-init-k3s-cp-01" {
-  node_name    = var.pve_node_name.node_01
+  node_name    = var.pve_node_name[0]
   content_type = "snippets"
   datastore_id = "local"
 

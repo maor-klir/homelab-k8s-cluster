@@ -2,7 +2,7 @@ resource "proxmox_virtual_environment_vm" "k3s-cp-01" {
   name        = "k3s-cp-01"
   description = "K3s control plane node 01"
   tags        = ["k3s", "control-plane"]
-  node_name   = var.pve_node_name.node_01
+  node_name   = var.pve_node_name[0]
   vm_id       = "101"
   on_boot     = true
 
@@ -59,7 +59,7 @@ resource "proxmox_virtual_environment_vm" "k3s-worker-01" {
   name        = "k3s-worker-01"
   description = "K3s worker node 01"
   tags        = ["k3s", "worker"]
-  node_name   = var.pve_node_name.node_02
+  node_name   = var.pve_node_name[1]
   vm_id       = "102"
   on_boot     = true
 
@@ -116,7 +116,7 @@ resource "proxmox_virtual_environment_vm" "k3s-worker-02" {
   name        = "k3s-worker-02"
   description = "K3s worker node 02"
   tags        = ["k3s", "worker"]
-  node_name   = var.pve_node_name.node_03
+  node_name   = var.pve_node_name[2]
   vm_id       = "103"
   on_boot     = true
 

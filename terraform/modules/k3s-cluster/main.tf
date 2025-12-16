@@ -47,6 +47,10 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   scsi_hardware = "virtio-scsi-single"
   bios          = "ovmf"
 
+  clone {
+    vm_id = data.proxmox_virtual_environment_vm.k3s-ubuntu-template.vm_id
+  }
+
   agent {
     enabled = false
   }
