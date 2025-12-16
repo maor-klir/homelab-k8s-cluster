@@ -4,7 +4,7 @@ locals {
     # Control plane nodes
     {
       for i in range(var.control_plane_count) :
-      "cp-${i + 1}" => {
+      "cp-${format("%02d", i + 1)}" => {
         name        = "k3s-${var.environment}-cp-${format("%02d", i + 1)}"
         description = "K3s ${var.environment} control plane node ${format("%02d", i + 1)}"
         tags        = ["k3s", "control-plane", var.environment]
@@ -18,7 +18,7 @@ locals {
     # Worker nodes
     {
       for i in range(var.worker_count) :
-      "worker-${i + 1}" => {
+      "worker-${format("%02d", i + 1)}" => {
         name        = "k3s-${var.environment}-worker-${format("%02d", i + 1)}"
         description = "K3s ${var.environment} worker node ${format("%02d", i + 1)}"
         tags        = ["k3s", "worker", var.environment]

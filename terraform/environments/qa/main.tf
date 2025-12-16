@@ -10,10 +10,10 @@ module "k3s_cluster" {
 
   private_ssh_key     = var.private_ssh_key
   environment         = "qa"
-  control_plane_count = 1
-  worker_count        = 3
+  control_plane_count = var.control_plane_count
+  worker_count        = var.worker_count
 
-  base_ip_address = "192.168.0."
+  base_ip_address = var.base_ip_address
   vm_id_start     = 211
 
   pve_nodes = var.pve_node_name
@@ -34,11 +34,11 @@ module "k3s_cluster" {
 module "azure_workload_identity" {
   source = "../../modules/azure-workload-identity"
 
-  environment = "qa"
-
+  environment            = "qa"
+  azure_subscription_id  = var.azure_subscription_id
   oidc_rg                = var.oidc_rg
   oidc_rg_location       = var.oidc_rg_location
-  oidc_storage_account   = "${var.oidc_storage_account}${random_string.resource_suffix.result}"
+  oidc_storage_account   = "${var.oidc_storage_account}$"
   oidc_storage_container = var.oidc_storage_container
 
   azwi_rg           = var.azwi_rg

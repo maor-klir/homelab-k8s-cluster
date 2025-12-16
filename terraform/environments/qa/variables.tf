@@ -10,6 +10,24 @@ variable "private_ssh_key" {
   sensitive   = true
 }
 
+variable "control_plane_count" {
+  description = "Number of control plane nodes"
+  type        = number
+  default     = 1
+}
+
+variable "worker_count" {
+  description = "Number of worker nodes"
+  type        = number
+  default     = 3
+}
+
+variable "base_ip_address" {
+  description = "Base IP address for the VMs"
+  type        = string
+  default     = "192.168.0."
+}
+
 variable "k3s_vm_dns" {
   description = "DNS config for the K3s VMs"
   type = object({

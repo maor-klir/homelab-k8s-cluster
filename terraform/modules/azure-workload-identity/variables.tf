@@ -7,10 +7,10 @@ variable "environment" {
   }
 }
 
-# variable "azure_subscription_id" {
-#   description = "Azure Subscription ID"
-#   type        = string
-# }
+variable "azure_subscription_id" {
+  description = "Azure Subscription ID"
+  type        = string
+}
 
 variable "oidc_rg" {
   description = "OIDC issuer resource group name"
