@@ -1,10 +1,3 @@
-# Generate random 4-character suffix for unique resource names
-resource "random_string" "resource_suffix" {
-  length  = 4
-  special = false
-  upper   = false
-}
-
 module "k3s_cluster" {
   source = "../../modules/k3s-cluster"
 
@@ -38,12 +31,12 @@ module "azure_workload_identity" {
   azure_subscription_id  = var.azure_subscription_id
   oidc_rg                = var.oidc_rg
   oidc_rg_location       = var.oidc_rg_location
-  oidc_storage_account   = "${var.oidc_storage_account}$"
+  oidc_storage_account   = var.oidc_storage_account
   oidc_storage_container = var.oidc_storage_container
 
   azwi_rg           = var.azwi_rg
   azwi_rg_location  = var.azwi_rg_location
-  akv_azwi_name     = "${var.akv_azwi_name}${random_string.resource_suffix.result}"
+  akv_azwi_name     = var.akv_azwi_name
   akv_azwi_location = var.akv_azwi_location
 
   azwi_service_account_namespace = var.azwi_service_account_namespace
