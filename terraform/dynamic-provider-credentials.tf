@@ -101,7 +101,7 @@ resource "azuread_application_federated_identity_credential" "hcpt_federated_cre
 # Creates a federated identity credential for the pve-k3s-qa workspace "plan" run phase.
 #
 # Reference: https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/azure-configuration
-resource "azuread_application_federated_identity_credential" "hcpt_federated_credential_qa_plan" {
+resource "azuread_application_federated_identity_credential" "k3s_qa_plan" {
   application_id = azuread_application.hcpt_application.id
   display_name   = "k3s-qa-plan"
   audiences      = [var.hcpt_azure_audience]
@@ -111,7 +111,7 @@ resource "azuread_application_federated_identity_credential" "hcpt_federated_cre
 }
 
 # Creates a federated identity credential for the pve-k3s-qa workspace "apply" run phase.
-resource "azuread_application_federated_identity_credential" "hcpt_federated_credential_qa_apply" {
+resource "azuread_application_federated_identity_credential" "k3s_qa_apply" {
   application_id = azuread_application.hcpt_application.id
   display_name   = "k3s-qa-apply"
   audiences      = [var.hcpt_azure_audience]
