@@ -10,7 +10,7 @@ output "hcpt_application_id" {
 
 output "hcpt_service_principal_client_id" {
   value       = azuread_service_principal.hcpt_service_principal.client_id
-  description = "HCP Terraform service principal client ID"
+  description = "HCP Terraform service principal client ID - shared across all workspaces via a variable set"
 }
 
 output "hcpt_service_principal_object_id" {
