@@ -1,9 +1,3 @@
-variable "pve_node_name" {
-  description = "The Proxmox Virtual Environment node names where the VMs will be created"
-  type        = list(string)
-  default     = ["pve-01", "pve-02", "pve-03"]
-}
-
 variable "private_ssh_key" {
   description = "The private SSH key content for accessing the Proxmox server"
   type        = string

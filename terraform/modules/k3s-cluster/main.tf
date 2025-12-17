@@ -47,9 +47,9 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   scsi_hardware = "virtio-scsi-single"
   bios          = "ovmf"
 
-  clone {
-    vm_id = data.proxmox_virtual_environment_vm.k3s-ubuntu-template.vm_id
-  }
+  # clone {
+  #   vm_id = data.proxmox_virtual_environment_vm.k3s-ubuntu-template.vm_id
+  # }
 
   agent {
     enabled = false
@@ -71,6 +71,17 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   efi_disk {
     type              = "4m"
     pre_enrolled_keys = true
+  }
+
+  disk {
+    datastore_id = "local-lvm"
+    file_id      = "local:import/noble-server-cloudimg-amd64.qcow2"
+    interface    = "scsi0"
+    iothread     = true
+    cache        = "writeback"
+    discard      = "on"
+    ssd          = true
+    size         = 32
   }
 
   initialization {
