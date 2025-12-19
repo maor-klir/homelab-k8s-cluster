@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 1.10.0"
+
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
@@ -7,7 +8,7 @@ terraform {
     }
     local = {
       source  = "hashicorp/local"
-      version = "~> 2.5"
+      version = "~> 2.5.3"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -22,13 +23,12 @@ terraform {
   cloud {
     organization = "maor"
     workspaces {
-      name = "pve-k3s"
+      name = "pve-k3s-qa"
     }
   }
 }
 
 provider "proxmox" {
-  # Configuration options
   insecure = true
 
   ssh {

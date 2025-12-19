@@ -1,0 +1,46 @@
+module "k3s_cluster" {
+  source = "../../modules/k3s-cluster"
+
+  private_ssh_key     = var.private_ssh_key
+  environment         = "qa"
+  control_plane_count = var.control_plane_count
+  worker_count        = var.worker_count
+
+  base_ip_address = var.base_ip_address
+  vm_id_start     = 221
+
+  pve_nodes = var.pve_node_name
+
+  k3s_vm_dns     = var.k3s_vm_dns
+  k3s_vm_user    = var.k3s_vm_user
+  k3s_public_key = var.k3s_public_key
+
+  control_plane_memory = 8192
+  control_plane_cores  = 2
+  worker_memory        = 8192
+  worker_cores         = 2
+
+  gateway     = "192.168.0.1"
+  subnet_mask = "24"
+}
+
+module "azure_workload_identity" {
+  source = "../../modules/azure-workload-identity"
+
+  environment            = "qa"
+  azure_subscription_id  = var.azure_subscription_id
+  oidc_rg                = var.oidc_rg
+  oidc_rg_location       = var.oidc_rg_location
+  oidc_storage_account   = var.oidc_storage_account
+  oidc_storage_container = var.oidc_storage_container
+
+  azwi_rg           = var.azwi_rg
+  azwi_rg_location  = var.azwi_rg_location
+  akv_azwi_name     = var.akv_azwi_name
+  akv_azwi_location = var.akv_azwi_location
+
+  azwi_service_account_namespace = var.azwi_service_account_namespace
+  azwi_service_account_name      = var.azwi_service_account_name
+
+  jwks_file_path = "${path.root}/../../shared/jwks/jwks-qa.json"
+}
