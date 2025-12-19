@@ -7,7 +7,7 @@ module "k3s_cluster" {
   worker_count        = var.worker_count
 
   base_ip_address = var.base_ip_address
-  vm_id_start     = 211
+  vm_id_start     = 221
 
   pve_nodes = var.pve_node_name
 
