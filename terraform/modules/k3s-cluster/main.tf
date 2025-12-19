@@ -68,6 +68,10 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
     type = "l26"
   }
 
+  network_device {
+    bridge = "vmbr0"
+  }
+
   efi_disk {
     type              = "4m"
     pre_enrolled_keys = true
