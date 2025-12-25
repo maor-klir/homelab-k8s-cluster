@@ -1,6 +1,7 @@
 module "k3s_cluster" {
   source = "../../modules/k3s-cluster"
 
+  pve_node_name       = var.pve_node_name
   private_ssh_key     = var.private_ssh_key
   environment         = "qa"
   control_plane_count = var.control_plane_count
@@ -9,19 +10,18 @@ module "k3s_cluster" {
   base_ip_address = var.base_ip_address
   vm_id_start     = 221
 
-  pve_nodes = var.pve_node_name
-
+  k3s_token      = var.k3s_token
+  k3s_public_key = var.k3s_public_key
   k3s_vm_dns     = var.k3s_vm_dns
   k3s_vm_user    = var.k3s_vm_user
-  k3s_public_key = var.k3s_public_key
 
+  # Being explicit only for clarity (all have default values in the module)
   control_plane_memory = 8192
   control_plane_cores  = 2
   worker_memory        = 8192
   worker_cores         = 2
-
-  gateway     = "192.168.0.1"
-  subnet_mask = "24"
+  gateway              = "192.168.0.1"
+  subnet_mask          = "24"
 }
 
 module "azure_workload_identity" {

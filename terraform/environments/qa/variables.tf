@@ -46,14 +46,20 @@ variable "k3s_public_key" {
   type        = string
 }
 
-variable "azure_subscription_id" {
+variable "k3s_token" {
+  description = "K3s cluster token for joining nodes"
   type        = string
-  description = "Azure Subscription ID where resources will be created"
+  sensitive   = true
 }
 
 ################################################################
 ##### Azure variables for workload identity implementation #####
 ################################################################
+
+variable "azure_subscription_id" {
+  type        = string
+  description = "Azure Subscription ID where resources will be created"
+}
 
 variable "oidc_rg" {
   type        = string

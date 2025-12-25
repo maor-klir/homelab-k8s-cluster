@@ -9,8 +9,8 @@ terraform {
 }
 
 provider "proxmox" {
+  # Configuration options
   insecure = true
-
   ssh {
     agent       = false
     private_key = base64decode(var.private_ssh_key)

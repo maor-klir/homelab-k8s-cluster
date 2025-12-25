@@ -1,0 +1,40 @@
+ipam:
+  operator:
+    clusterPoolIPv4PodCIDRList: "10.42.0.0/16"
+
+operator:
+  # cilium-operator deployment replicas (best practice is to have one on each cluster node).
+  # NOTE: This configuration assumes a cluster with at least 3 nodes; adjust replicas to match your node count.
+  replicas: 3
+  rollOutPods: true
+
+# Without kube-proxy
+kubeProxyReplacement: true
+k8sServiceHost: ${k8sServiceHost}
+k8sServicePort: 6443
+
+ingressController:
+  enabled: true
+  default: true
+  loadbalancerMode: shared
+#   service:
+#     labels:
+#       cilium-lb-pool: lb-pool
+
+# gatewayAPI:
+#   enabled: true
+
+hubble:
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+
+l2announcements:
+  enabled: true
+
+# Calculated based on 10 services:
+# as per the Cilium docs - https://docs.cilium.io/en/latest/network/l2-announcements/#sizing-client-rate-limit
+k8sClientRateLimit:
+  qps: 5
+  burst: 10
