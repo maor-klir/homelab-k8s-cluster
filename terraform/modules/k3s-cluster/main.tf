@@ -1,4 +1,7 @@
 locals {
+  # Get the first control plane IP address
+  control_plane_ip = "${var.base_ip_address}${var.vm_id_start}"
+
   # Create a map of all nodes with their properties
   nodes = merge(
     # Control plane nodes
@@ -8,7 +11,8 @@ locals {
         name        = "k3s-${var.environment}-cp-${format("%02d", i + 1)}"
         description = "K3s ${var.environment} control plane node ${format("%02d", i + 1)}"
         tags        = ["k3s", "control-plane", var.environment]
-        node_name   = var.pve_nodes[i % length(var.pve_nodes)]
+        role        = "control-plane"
+        node_name   = var.pve_node_name[i % length(var.pve_node_name)]
         vm_id       = var.vm_id_start + i
         ip_address  = "${var.base_ip_address}${var.vm_id_start + i}"
         memory      = var.control_plane_memory
@@ -22,7 +26,8 @@ locals {
         name        = "k3s-${var.environment}-worker-${format("%02d", i + 1)}"
         description = "K3s ${var.environment} worker node ${format("%02d", i + 1)}"
         tags        = ["k3s", "worker", var.environment]
-        node_name   = var.pve_nodes[(var.control_plane_count + i) % length(var.pve_nodes)]
+        role        = "worker"
+        node_name   = var.pve_node_name[(var.control_plane_count + i) % length(var.pve_node_name)]
         vm_id       = var.vm_id_start + var.control_plane_count + i
         ip_address  = "${var.base_ip_address}${var.vm_id_start + var.control_plane_count + i}"
         memory      = var.worker_memory
@@ -32,6 +37,46 @@ locals {
   )
 }
 
+# Upload cloud-init snippets to Proxmox (one per VM)
+resource "proxmox_virtual_environment_file" "user_data" {
+  for_each = local.nodes
+
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = each.value.node_name
+
+  source_raw {
+    file_name = "user-data-${each.value.name}.yaml"
+    data = templatefile(
+      each.value.role == "control-plane" ? "${path.module}/${var.user_data_control_plane}" : "${path.module}/${var.user_data_worker}",
+      each.value.role == "control-plane" ? {
+        general_config = templatefile("${path.module}/${var.user_data_general}", {
+          username   = var.k3s_vm_user
+          public_key = var.k3s_public_key
+          hostname   = each.value.name
+        })
+        k3s_script          = templatefile("${path.module}/scripts/k3s.sh", { k3s_token = var.k3s_token })
+        wait_for_k3s_script = templatefile("${path.module}/scripts/wait-for-k3s.sh", {})
+        # Using templatefile() for consistency, even though cilium.sh currently has no template variables
+        cilium_script = templatefile("${path.module}/scripts/cilium.sh", {})
+        cilium_values = templatefile("${path.module}/helm/cilium-values.yaml.tftpl", {
+          k8sServiceHost = local.control_plane_ip
+        })
+        } : {
+        general_config = templatefile("${path.module}/${var.user_data_general}", {
+          username   = var.k3s_vm_user
+          public_key = var.k3s_public_key
+          hostname   = each.value.name
+        })
+        k3s_token        = var.k3s_token
+        control_plane_ip = local.control_plane_ip
+        k3s_cluster_port = var.k3s_cluster_port
+      }
+    )
+  }
+}
+
+# Provision K3s VMs in Proxmox VE
 resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   for_each = local.nodes
 
@@ -46,10 +91,6 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   machine       = "q35"
   scsi_hardware = "virtio-scsi-single"
   bios          = "ovmf"
-
-  # clone {
-  #   vm_id = data.proxmox_virtual_environment_vm.k3s-ubuntu-template.vm_id
-  # }
 
   agent {
     enabled = false
@@ -85,7 +126,7 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
     cache        = "writeback"
     discard      = "on"
     ssd          = true
-    size         = 32
+    size         = 32 # Size in GiB (Proxmox disk size is specified in GiB)
   }
 
   initialization {
@@ -99,9 +140,13 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
         gateway = var.gateway
       }
     }
-    user_account {
-      username = var.k3s_vm_user
-      keys     = [var.k3s_public_key]
-    }
+    user_data_file_id = proxmox_virtual_environment_file.user_data[each.key].id
+  }
+
+  # cloud-init runs once on first boot - ignore user-data changes to prevent unnecessary VM replacements
+  lifecycle {
+    ignore_changes = [
+      initialization[0].user_data_file_id
+    ]
   }
 }

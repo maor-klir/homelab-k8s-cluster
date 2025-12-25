@@ -1,10 +1,10 @@
 # Proxmox VE K3s VM configuration variables
+worker_count = 2
+k3s_vm_user  = "k3s"
 k3s_vm_dns = {
   domain  = ".local"
   servers = ["1.1.1.1", "8.8.8.8"]
 }
-
-k3s_vm_user = "k3s"
 
 # Azure - HCP Terraform integration input variables
 azure_subscription_id = "f434d9a5-438f-413f-bba0-243d0fbad167"

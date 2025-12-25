@@ -1,0 +1,12 @@
+${general_config}
+
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+  - curl -sfL https://get.k3s.io | sh -s - agent --token "${k3s_token}" --server "https://${control_plane_ip}:${k3s_cluster_port}"
+
+# Reboot immediately after cloud-init completes
+power_state:
+  delay: now
+  mode: reboot
+  message: "Rebooting after cloud-init completion..."
+  condition: true

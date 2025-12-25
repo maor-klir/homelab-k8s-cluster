@@ -1,0 +1,36 @@
+${general_config}
+
+write_files:
+  - owner: root:root
+    path: /root/k3s.sh
+    permissions: 0775
+    content: |
+      ${indent(6, k3s_script)}
+  - owner: root:root
+    path: /root/wait-for-k3s.sh
+    permissions: 0775
+    content: |
+      ${indent(6, wait_for_k3s_script)}
+  - owner: root:root
+    path: /root/cilium.sh
+    permissions: 0775
+    content: |
+      ${indent(6, cilium_script)}
+  - owner: root:root
+    path: /root/cilium-values.yaml
+    permissions: 0644
+    content: |
+      ${indent(6, cilium_values)}
+
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+  - /root/k3s.sh
+  - /root/wait-for-k3s.sh
+  - /root/cilium.sh
+
+# Reboot immediately after cloud-init completes
+power_state:
+  delay: now
+  mode: reboot
+  message: "Rebooting after cloud-init completion..."
+  condition: true

@@ -1,37 +1,35 @@
+#cloud-config
 users:
   - name: ${username}
-    lock_passwd: false
-    groups: [adm, cdrom, dip, lxd, sudo]
+    lock_passwd: true # Disable password login
+    groups: [adm, cdrom, dip, plugdev, lxd, sudo]
     shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
     ssh_authorized_keys:
-      - ${public-key}
+      - ${public_key}
 
 hostname: ${hostname}
-package_reboot_if_required: true
-package_update: true
-package_upgrade: true
 locale: en_US.UTF-8
 timezone: Europe/Berlin
 keyboard:
   layout: us
 
+# SSH hardening
 write_files:
   - path: /etc/ssh/sshd_config.d/01-ssh-hardening.conf
     content: |
       PermitRootLogin no
-      PasswordAuthentication yes
+      PasswordAuthentication no
       ChallengeResponseAuthentication no
       UsePAM yes
 
+# Package management
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
 packages:
   - qemu-guest-agent
   - net-tools
-
-runcmd:
-  - systemctl enable --now qemu-guest-agent
-
-power_state:
-  delay: now
-  mode: reboot
-  message: Rebooting after cloud-init completion
-  condition: true
+  - curl
+  - gpg
+  - apt-transport-https
