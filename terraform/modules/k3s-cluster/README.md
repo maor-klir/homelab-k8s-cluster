@@ -43,9 +43,9 @@ No modules.
 | <a name="input_private_ssh_key"></a> [private\_ssh\_key](#input\_private\_ssh\_key) | The private SSH key content for accessing the Proxmox server | `string` | n/a | yes |
 | <a name="input_pve_node_name"></a> [pve\_node\_name](#input\_pve\_node\_name) | The Proxmox Virtual Environment node names where the VMs will be created | `list(string)` | <pre>[<br/>  "pve-01",<br/>  "pve-02",<br/>  "pve-03"<br/>]</pre> | no |
 | <a name="input_subnet_mask"></a> [subnet\_mask](#input\_subnet\_mask) | Subnet mask in CIDR notation | `string` | `"24"` | no |
-| <a name="input_user_data_control_plane"></a> [user\_data\_control\_plane](#input\_user\_data\_control\_plane) | Cloud-init user data template for control-plane nodes | `string` | `"cloud-init/control-plane.yaml.tftpl"` | no |
-| <a name="input_user_data_general"></a> [user\_data\_general](#input\_user\_data\_general) | Cloud-init general user data template file path | `string` | `"cloud-init/general.yaml.tftpl"` | no |
-| <a name="input_user_data_worker"></a> [user\_data\_worker](#input\_user\_data\_worker) | Cloud-init user data template for worker nodes | `string` | `"cloud-init/worker.yaml.tftpl"` | no |
+| <a name="input_user_data_control_plane"></a> [user\_data\_control\_plane](#input\_user\_data\_control\_plane) | cloud-init user data template for the control plane nodes | `string` | `"cloud-init/control-plane.yaml.tftpl"` | no |
+| <a name="input_user_data_general"></a> [user\_data\_general](#input\_user\_data\_general) | cloud-init general user data template file path | `string` | `"cloud-init/general.yaml.tftpl"` | no |
+| <a name="input_user_data_worker"></a> [user\_data\_worker](#input\_user\_data\_worker) | cloud-init user data template for the worker nodes | `string` | `"cloud-init/worker.yaml.tftpl"` | no |
 | <a name="input_vm_id_start"></a> [vm\_id\_start](#input\_vm\_id\_start) | Starting VM ID for the VMs | `number` | n/a | yes |
 | <a name="input_worker_cores"></a> [worker\_cores](#input\_worker\_cores) | CPU cores for worker nodes | `number` | `2` | no |
 | <a name="input_worker_count"></a> [worker\_count](#input\_worker\_count) | Number of worker nodes | `number` | `3` | no |

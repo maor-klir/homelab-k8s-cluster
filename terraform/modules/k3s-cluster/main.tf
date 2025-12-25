@@ -48,22 +48,22 @@ resource "proxmox_virtual_environment_file" "user_data" {
   source_raw {
     file_name = "user-data-${each.value.name}.yaml"
     data = templatefile(
-      each.value.role == "control-plane" ? var.user_data_control_plane : var.user_data_worker,
+      each.value.role == "control-plane" ? "${path.module}/${var.user_data_control_plane}" : "${path.module}/${var.user_data_worker}",
       each.value.role == "control-plane" ? {
-        general_config = templatefile(var.user_data_general, {
+        general_config = templatefile("${path.module}/${var.user_data_general}", {
           username   = var.k3s_vm_user
           public_key = var.k3s_public_key
           hostname   = each.value.name
         })
-        k3s_script          = templatefile("./scripts/k3s.sh", { k3s_token = var.k3s_token })
-        wait_for_k3s_script = templatefile("./scripts/wait-for-k3s.sh", {})
+        k3s_script          = templatefile("${path.module}/scripts/k3s.sh", { k3s_token = var.k3s_token })
+        wait_for_k3s_script = templatefile("${path.module}/scripts/wait-for-k3s.sh", {})
         # Using templatefile() for consistency, even though cilium.sh currently has no template variables
-        cilium_script = templatefile("./scripts/cilium.sh", {})
-        cilium_values = templatefile("./helm/cilium-values.yaml.tftpl", {
+        cilium_script = templatefile("${path.module}/scripts/cilium.sh", {})
+        cilium_values = templatefile("${path.module}/helm/cilium-values.yaml.tftpl", {
           k8sServiceHost = local.control_plane_ip
         })
         } : {
-        general_config = templatefile(var.user_data_general, {
+        general_config = templatefile("${path.module}/${var.user_data_general}", {
           username   = var.k3s_vm_user
           public_key = var.k3s_public_key
           hostname   = each.value.name

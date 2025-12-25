@@ -82,19 +82,19 @@ variable "subnet_mask" {
 
 # cloud-init variables
 variable "user_data_general" {
-  description = "Cloud-init general user data template file path"
+  description = "cloud-init general user data template file path"
   type        = string
   default     = "cloud-init/general.yaml.tftpl"
 }
 
 variable "user_data_control_plane" {
-  description = "Cloud-init user data template for control-plane nodes"
+  description = "cloud-init user data template for the control plane nodes"
   type        = string
   default     = "cloud-init/control-plane.yaml.tftpl"
 }
 
 variable "user_data_worker" {
-  description = "Cloud-init user data template for worker nodes"
+  description = "cloud-init user data template for the worker nodes"
   type        = string
   default     = "cloud-init/worker.yaml.tftpl"
 }
