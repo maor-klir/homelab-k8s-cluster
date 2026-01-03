@@ -2,6 +2,11 @@ ${general_config}
 
 write_files:
   - owner: root:root
+    path: /etc/rancher/k3s/config.yaml
+    permissions: 0600
+    content: |
+      ${indent(6, k3s_config)}
+  - owner: root:root
     path: /root/k3s.sh
     permissions: 0775
     content: |
