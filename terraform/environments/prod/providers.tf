@@ -23,7 +23,7 @@ terraform {
   cloud {
     organization = "maor"
     workspaces {
-      name = "pve-k3s-qa"
+      name = "pve-k3s-prod"
     }
   }
 }
