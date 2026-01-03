@@ -3,5 +3,5 @@ kind: ServiceAccount
 metadata:
   name: workload-identity-sa
   annotations:
-    azure.workload.identity/client-id: "006917c1-1485-4372-820b-52400bc84da0"
+    azure.workload.identity/client-id: "2213c653-394b-48bd-950f-b90211676432"
     azure.workload.identity/tenant-id: "7a07eeec-fee1-4167-a709-209e4f54f334"
