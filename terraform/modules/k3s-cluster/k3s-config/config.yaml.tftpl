@@ -11,11 +11,11 @@ cluster-init: true
 # --- kube-apiserver Flags ---
 kube-apiserver-arg:
   - "service-account-issuer=${oidc_issuer_uri}"
-  - "service-account-signing-key-file=/var/lib/rancher/k3s/server/sa-keys/sa.key"
-  - "service-account-key-file=/var/lib/rancher/k3s/server/sa-keys/sa.pub"
+  - "service-account-signing-key-file=/var/lib/rancher/k3s/server/tls/workload-identity-sa.key"
+  - "service-account-key-file=/var/lib/rancher/k3s/server/tls/workload-identity-sa.pub"
 # --- kube-controller-manager Flags ---
 kube-controller-manager-arg:
-  - "service-account-private-key-file=/var/lib/rancher/k3s/server/sa-keys/sa.key"
+  - "service-account-private-key-file=/var/lib/rancher/k3s/server/tls/workload-identity-sa.key"
 # Add the private IP to the TLS SAN list for the certificate
 tls-san:
   - "${control_plane_ip}"
