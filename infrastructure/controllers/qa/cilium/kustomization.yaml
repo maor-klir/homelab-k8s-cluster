@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base/cilium/
+patches:
+  - target:
+      kind: CiliumLoadBalancerIPPool
+      name: loadbalancer-ip-pool
+    patch: |
+      - op: replace
+        path: /spec/blocks/0/start
+        value: "192.168.0.231"
+      - op: replace
+        path: /spec/blocks/0/stop
+        value: "192.168.0.240"
+  - target:
+      kind: HelmRelease
+      name: cilium
+    patch: |
+      - op: replace
+        path: /spec/values/k8sServiceHost
+        value: "192.168.0.221"
