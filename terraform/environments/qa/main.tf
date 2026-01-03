@@ -1,3 +1,8 @@
+locals {
+  # Construct the OIDC issuer URI - must match what azure_workload_identity module creates
+  oidc_issuer_uri = "https://${var.oidc_storage_account}.blob.core.windows.net/${var.oidc_storage_container}"
+}
+
 module "k3s_cluster" {
   source = "../../modules/k3s-cluster"
 
@@ -14,6 +19,9 @@ module "k3s_cluster" {
   k3s_public_key = var.k3s_public_key
   k3s_vm_dns     = var.k3s_vm_dns
   k3s_vm_user    = var.k3s_vm_user
+
+  # OIDC issuer URI for Azure Workload Identity
+  oidc_issuer_uri = local.oidc_issuer_uri
 
   # Being explicit only for clarity (all have default values in the module)
   control_plane_memory = 8192

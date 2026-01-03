@@ -129,3 +129,8 @@ variable "k3s_cluster_port" {
   type        = number
   default     = 6443
 }
+
+variable "oidc_issuer_uri" {
+  description = "OIDC issuer URI for Azure Workload Identity (e.g., https://<storage-account>.blob.core.windows.net/$web)"
+  type        = string
+}
