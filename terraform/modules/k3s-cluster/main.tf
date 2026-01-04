@@ -98,7 +98,7 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   bios          = "ovmf"
 
   agent {
-    enabled = false
+    enabled = true
   }
 
   cpu {
