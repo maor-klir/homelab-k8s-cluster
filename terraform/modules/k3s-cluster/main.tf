@@ -99,6 +99,7 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
 
   agent {
     enabled = true
+    timeout = "3m" # Reduce from default 15m
   }
 
   cpu {
@@ -119,8 +120,8 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   }
 
   efi_disk {
-    type              = "4m"
-    pre_enrolled_keys = true
+    type              = "4m" # Modern 4MB OVMF (UEFI) firmware, required for Secure Boot support (vs 2m legacy version)
+    pre_enrolled_keys = true # Automatically enrolls Microsoft and distribution Secure Boot keys so the OS can boot
   }
 
   disk {
