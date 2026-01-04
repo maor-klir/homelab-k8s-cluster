@@ -29,7 +29,7 @@ wget -q "https://github.com/Azure/azure-workload-identity/releases/download/${AZ
 tar -xzf "azwi-${AZWI_VERSION}-linux-amd64.tar.gz" -C /tmp
 mv /tmp/azwi /usr/local/bin/azwi
 chmod +x /usr/local/bin/azwi
-rm "azwi-v${AZWI_VERSION}-linux-amd64.tar.gz"
+rm -f "azwi-${AZWI_VERSION}-linux-amd64.tar.gz"
 
 # Generate JWKS document
 azwi jwks --public-keys "${PUBLIC_KEY}" --output-file "${JWKS_OUTPUT}"

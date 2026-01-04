@@ -34,7 +34,7 @@ write_files:
 
 runcmd:
   - systemctl enable --now qemu-guest-agent
-  - /root/setup-workload-identity-keys.sh
+  - /root/workload-identity-keys.sh
   - /root/k3s.sh
   - /root/wait-for-k3s.sh
   - /root/cilium.sh

@@ -1,3 +1,1 @@
 # Placeholder for jwks.json
-# After bootstrapping the QA cluster, retrieve /root/jwks.json from the first control plane node
-# and save it as jwks.json in this directory.
