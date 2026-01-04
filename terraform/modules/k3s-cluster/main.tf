@@ -60,9 +60,10 @@ resource "proxmox_virtual_environment_file" "user_data" {
           control_plane_ip = local.control_plane_ip
           oidc_issuer_uri  = var.oidc_issuer_uri
         })
-        k3s_script          = templatefile("${path.module}/scripts/k3s.sh", {})
-        wait_for_k3s_script = templatefile("${path.module}/scripts/wait-for-k3s.sh", {})
-        cilium_script       = templatefile("${path.module}/scripts/cilium.sh", {}) # Using templatefile() for consistency, even though cilium.sh currently has no template variables
+        k3s_script             = templatefile("${path.module}/scripts/k3s.sh", {})
+        wait_for_k3s_script    = templatefile("${path.module}/scripts/wait-for-k3s.sh", {})
+        cilium_script          = templatefile("${path.module}/scripts/cilium.sh", {}) # Using templatefile() for consistency, even though cilium.sh currently has no template variables
+        workload_identity_keys = file("${path.module}/scripts/workload-identity-keys.sh")
         cilium_values = templatefile("${path.module}/helm/cilium-values.yaml.tftpl", {
           k8sServiceHost = local.control_plane_ip
         })
@@ -97,7 +98,8 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   bios          = "ovmf"
 
   agent {
-    enabled = false
+    enabled = true
+    timeout = "3m" # Reduce from default 15m
   }
 
   cpu {
@@ -118,8 +120,8 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   }
 
   efi_disk {
-    type              = "4m"
-    pre_enrolled_keys = true
+    type              = "4m" # Modern 4MB OVMF (UEFI) firmware, required for Secure Boot support (vs 2m legacy version)
+    pre_enrolled_keys = true # Automatically enrolls Microsoft and distribution Secure Boot keys so the OS can boot
   }
 
   disk {
