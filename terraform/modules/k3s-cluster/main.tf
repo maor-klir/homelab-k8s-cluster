@@ -63,7 +63,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
         k3s_script             = templatefile("${path.module}/scripts/k3s.sh", {})
         wait_for_k3s_script    = templatefile("${path.module}/scripts/wait-for-k3s.sh", {})
         cilium_script          = templatefile("${path.module}/scripts/cilium.sh", {}) # Using templatefile() for consistency, even though cilium.sh currently has no template variables
-        workload_identity_keys = file("${path.module}/scripts/setup-workload-identity-keys.sh")
+        workload_identity_keys = file("${path.module}/scripts/workload-identity-keys.sh")
         cilium_values = templatefile("${path.module}/helm/cilium-values.yaml.tftpl", {
           k8sServiceHost = local.control_plane_ip
         })
