@@ -1,5 +1,4 @@
-# Generate workload identity service account keys once per cluster
-# These keys will be shared across ALL control plane nodes in the cluster
+# Generate a TLS private key for workload identity service account
 resource "tls_private_key" "workload_identity_sa" {
   algorithm = "RSA"
   rsa_bits  = 2048
