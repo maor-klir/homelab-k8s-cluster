@@ -9,3 +9,9 @@ output "k3s_nodes" {
     }
   }
 }
+
+output "workload_identity_public_key_pem" {
+  description = "Workload identity service account public key in PEM format for JWKS generation"
+  value       = tls_private_key.workload_identity_sa.public_key_pem
+  sensitive   = false
+}

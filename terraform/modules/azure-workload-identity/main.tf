@@ -52,20 +52,20 @@ resource "azurerm_storage_blob" "openid_configuration" {
 ### JSON Web Key Sets (JWKS) ###
 ################################
 
-# JWKS file - pre-generated using: azwi jwks --public-keys <key_path> --output-file jwks.json
-# Only read the file if it exists
-data "local_file" "jwks" {
-  count    = fileexists(var.jwks_file_path) ? 1 : 0
-  filename = var.jwks_file_path
+# Generate JWKS from public key PEM using azwi
+data "external" "jwks" {
+  program = ["bash", "${path.module}/scripts/generate-jwks.sh"]
+  query = {
+    public_key_pem = var.workload_identity_public_key_pem
+  }
 }
 
 resource "azurerm_storage_blob" "jwks_document" {
-  count                  = length(data.local_file.jwks) > 0 ? 1 : 0
   name                   = "openid/v1/jwks"
   storage_account_name   = azurerm_storage_account.oidc_storage_account.name
   storage_container_name = azurerm_storage_container.oidc_storage_container.name
   type                   = "Block"
-  source_content         = data.local_file.jwks[0].content
+  source_content         = data.external.jwks.result.jwks
   content_type           = "application/jwk-set+json"
 }
 
