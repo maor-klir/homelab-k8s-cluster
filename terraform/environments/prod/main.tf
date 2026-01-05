@@ -1,9 +1,6 @@
 locals {
   # Construct the OIDC issuer URI - must match what azure_workload_identity module creates
   oidc_issuer_uri = "https://${var.oidc_storage_account}.blob.core.windows.net/${var.oidc_storage_container}"
-
-  # Path where JWKS will be stored locally
-  jwks_local_path = "${path.module}/jwks/jwks.json"
 }
 
 module "k3s_cluster" {
@@ -53,5 +50,6 @@ module "azure_workload_identity" {
   azwi_service_account_namespace = var.azwi_service_account_namespace
   azwi_service_account_name      = var.azwi_service_account_name
 
-  jwks_file_path = local.jwks_local_path
+  # Pass the public key from k3s_cluster module for JWKS generation
+  workload_identity_public_key_pem = module.k3s_cluster.workload_identity_public_key_pem
 }

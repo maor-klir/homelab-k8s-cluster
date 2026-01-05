@@ -1,3 +1,9 @@
+# Generate a TLS private key for workload identity service account
+resource "tls_private_key" "workload_identity_sa" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
 locals {
   # Get the first control plane IP address
   control_plane_ip = "${var.base_ip_address}${var.vm_id_start}"
@@ -55,15 +61,17 @@ resource "proxmox_virtual_environment_file" "user_data" {
           public_key = var.k3s_public_key
           hostname   = each.value.name
         })
-        k3s_config = templatefile("${path.module}/k3s-config/config.yaml.tftpl", {
+        k3s_config = templatefile("${path.module}/k3s-config/${each.key == "cp-01" ? "config-first-cp" : "config-additional-cp"}.yaml.tftpl", {
           k3s_token        = var.k3s_token
           control_plane_ip = local.control_plane_ip
           oidc_issuer_uri  = var.oidc_issuer_uri
         })
-        k3s_script             = templatefile("${path.module}/scripts/k3s.sh", {})
-        wait_for_k3s_script    = templatefile("${path.module}/scripts/wait-for-k3s.sh", {})
-        cilium_script          = templatefile("${path.module}/scripts/cilium.sh", {}) # Using templatefile() for consistency, even though cilium.sh currently has no template variables
-        workload_identity_keys = file("${path.module}/scripts/workload-identity-keys.sh")
+        k3s_script          = templatefile("${path.module}/scripts/k3s.sh", {})
+        wait_for_k3s_script = templatefile("${path.module}/scripts/wait-for-k3s.sh", {})
+        cilium_script       = templatefile("${path.module}/scripts/cilium.sh", {}) # Using templatefile() for consistency, even though cilium.sh currently has no template variables
+        # Inject the same workload identity keys to all control plane nodes in the cluster
+        workload_identity_private_key = tls_private_key.workload_identity_sa.private_key_pem
+        workload_identity_public_key  = tls_private_key.workload_identity_sa.public_key_pem
         cilium_values = templatefile("${path.module}/helm/cilium-values.yaml.tftpl", {
           k8sServiceHost = local.control_plane_ip
         })

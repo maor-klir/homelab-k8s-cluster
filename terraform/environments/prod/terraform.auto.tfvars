@@ -1,6 +1,7 @@
 # Proxmox VE K3s VM configuration variables
-worker_count = 3
-k3s_vm_user  = "k3s"
+control_plane_count = 3
+worker_count        = 3
+k3s_vm_user         = "k3s"
 k3s_vm_dns = {
   domain  = ".local"
   servers = ["1.1.1.1", "8.8.8.8"]
