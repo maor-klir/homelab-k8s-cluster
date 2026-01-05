@@ -272,22 +272,52 @@ resource "terraform_data" "fetch_k3s_token" {
       echo "${base64decode(var.private_ssh_key)}" > "$TMP_KEY"
       chmod 600 "$TMP_KEY"
 
-      max_attempts=60
-      attempt=0
-      while [ $attempt -lt $max_attempts ]; do
+      echo "Waiting for ${local.control_plane_ip} to be ready after cloud-init and reboot..."
+
+      # First, wait for SSH to be available (VM needs to reboot after cloud-init)
+      max_ssh_attempts=60  # 5 minutes for reboot
+      ssh_attempt=0
+      while [ $ssh_attempt -lt $max_ssh_attempts ]; do
         if ssh -i "$TMP_KEY" \
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
             -o ConnectTimeout=5 \
             ${var.k3s_vm_user}@${local.control_plane_ip} \
-            "test -f /var/lib/rancher/k3s/server/token" 2>/dev/null; then
-          echo "K3s token file found"
-          exit 0
+            "echo 'SSH ready'" >/dev/null 2>&1; then
+          echo "✓ SSH connection established after reboot"
+          break
         fi
-        attempt=$((attempt + 1))
+        ssh_attempt=$((ssh_attempt + 1))
         sleep 5
       done
-      echo "Timeout waiting for k3s token file"
+
+      if [ $ssh_attempt -eq $max_ssh_attempts ]; then
+        echo "✗ Failed to establish SSH connection after reboot"
+        exit 1
+      fi
+
+      # Now wait for k3s token file to be created
+      echo "Waiting for k3s token generation..."
+      max_token_attempts=60  # Another 5 minutes for k3s to start and create token
+      token_attempt=0
+      while [ $token_attempt -lt $max_token_attempts ]; do
+        if ssh -i "$TMP_KEY" \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            ${var.k3s_vm_user}@${local.control_plane_ip} \
+            "sudo test -f /var/lib/rancher/k3s/server/token" 2>/dev/null; then
+          echo "✓ K3s token file found"
+          exit 0
+        fi
+
+        if [ $((token_attempt % 6)) -eq 0 ]; then
+          echo "Still waiting for token... ($token_attempt/60)"
+        fi
+
+        token_attempt=$((token_attempt + 1))
+        sleep 5
+      done
+      echo "✗ Timeout: k3s token file not found"
       exit 1
     EOT
   }
@@ -309,7 +339,7 @@ data "external" "k3s_token" {
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         ${var.k3s_vm_user}@${local.control_plane_ip} \
-        "jq -n --arg token \\"\\$(cat /var/lib/rancher/k3s/server/token)\\" '{token: \\$token}'"
+        "jq -n --arg token \\"\\$(sudo cat /var/lib/rancher/k3s/server/token)\\" '{token: \\$token}'"
   EOT
   ]
 }
