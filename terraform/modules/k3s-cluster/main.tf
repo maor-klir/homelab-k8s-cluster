@@ -265,10 +265,17 @@ resource "terraform_data" "fetch_k3s_token" {
 
   provisioner "local-exec" {
     command = <<-EOT
+      set -e
+      TMP_KEY=$(mktemp)
+      trap "rm -f $TMP_KEY" EXIT
+
+      echo "${base64decode(var.private_ssh_key)}" > "$TMP_KEY"
+      chmod 600 "$TMP_KEY"
+
       max_attempts=60
       attempt=0
       while [ $attempt -lt $max_attempts ]; do
-        if ssh -i <(echo "${base64decode(var.private_ssh_key)}") \
+        if ssh -i "$TMP_KEY" \
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
             -o ConnectTimeout=5 \
@@ -291,7 +298,14 @@ data "external" "k3s_token" {
   depends_on = [terraform_data.fetch_k3s_token]
 
   program = ["bash", "-c", <<-EOT
-    ssh -i <(echo "${base64decode(var.private_ssh_key)}") \
+    set -e
+    TMP_KEY=$(mktemp)
+    trap "rm -f $TMP_KEY" EXIT
+
+    echo "${base64decode(var.private_ssh_key)}" > "$TMP_KEY"
+    chmod 600 "$TMP_KEY"
+
+    ssh -i "$TMP_KEY" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         ${var.k3s_vm_user}@${local.control_plane_ip} \
