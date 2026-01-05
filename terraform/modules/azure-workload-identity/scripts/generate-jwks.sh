@@ -26,7 +26,7 @@ if ! command -v azwi &> /dev/null; then
     fi
     wget -q "https://github.com/Azure/azure-workload-identity/releases/download/${AZWI_VERSION}/azwi-${AZWI_VERSION}-linux-amd64.tar.gz" -O /tmp/azwi.tar.gz
     tar -xzf /tmp/azwi.tar.gz -C /tmp
-    mv /tmp/azwi /usr/local/bin/
+    sudo mv /tmp/azwi /usr/local/bin/
 fi
 
 # Generate JWKS
