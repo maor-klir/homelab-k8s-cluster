@@ -20,3 +20,4 @@ spec:
     crds: CreateReplace
   driftDetection:
     mode: enabled
+  values: {}
