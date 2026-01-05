@@ -46,12 +46,6 @@ variable "k3s_public_key" {
   type        = string
 }
 
-variable "k3s_token" {
-  description = "K3s cluster token for joining nodes"
-  type        = string
-  sensitive   = true
-}
-
 ################################################################
 ##### Azure variables for workload identity implementation #####
 ################################################################

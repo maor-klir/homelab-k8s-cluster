@@ -15,7 +15,6 @@ module "k3s_cluster" {
   base_ip_address = var.base_ip_address
   vm_id_start     = 221
 
-  k3s_token      = var.k3s_token
   k3s_public_key = var.k3s_public_key
   k3s_vm_dns     = var.k3s_vm_dns
   k3s_vm_user    = var.k3s_vm_user

@@ -1,13 +1,23 @@
 output "k3s_nodes" {
   description = "Map of all node details"
-  value = {
-    for k, v in proxmox_virtual_environment_vm.k3s_nodes :
-    k => {
-      name       = v.name
-      role       = contains(v.tags, "control-plane") ? "control-plane" : "worker"
-      ip_address = v.initialization[0].ip_config[0].ipv4[0].address
+  value = merge(
+    {
+      for k, v in proxmox_virtual_environment_vm.control_plane :
+      k => {
+        name       = v.name
+        role       = "control-plane"
+        ip_address = v.initialization[0].ip_config[0].ipv4[0].address
+      }
+    },
+    {
+      for k, v in proxmox_virtual_environment_vm.workers :
+      k => {
+        name       = v.name
+        role       = "worker"
+        ip_address = v.initialization[0].ip_config[0].ipv4[0].address
+      }
     }
-  }
+  )
 }
 
 output "workload_identity_public_key_pem" {
