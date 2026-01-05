@@ -3,22 +3,21 @@ ipam:
     clusterPoolIPv4PodCIDRList: "10.42.0.0/16"
 
 operator:
-  # cilium-operator deployment replicas (best practice is to have one on each cluster node).
-  replicas: ${replicas}
+  replicas: 3
   rollOutPods: true
 
 # Without kube-proxy
 kubeProxyReplacement: true
-k8sServiceHost: ${k8sServiceHost}
+k8sServiceHost: 192.168.0.221
 k8sServicePort: 6443
 
 ingressController:
   enabled: true
   default: true
   loadbalancerMode: shared
-#   service:
-#     labels:
-#       cilium-lb-pool: lb-pool
+  # service:
+  #   labels:
+  #     cilium-lb-pool: lb-pool
 
 # gatewayAPI:
 #   enabled: true

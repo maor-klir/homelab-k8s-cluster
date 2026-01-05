@@ -3,7 +3,7 @@ ipam:
     clusterPoolIPv4PodCIDRList: "10.42.0.0/16"
 
 operator:
-  replicas: 3
+  replicas: 6
   rollOutPods: true
 
 # Without kube-proxy

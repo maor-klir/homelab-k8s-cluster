@@ -1,0 +1,45 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cilium
+  namespace: kube-system
+spec:
+  values:
+    ipam:
+      operator:
+        clusterPoolIPv4PodCIDRList: "10.42.0.0/16"
+
+    operator:
+      replicas: 3
+      rollOutPods: true
+
+    # Without kube-proxy
+    kubeProxyReplacement: true
+    k8sServiceHost: 192.168.0.221
+    k8sServicePort: 6443
+
+    ingressController:
+      enabled: true
+      default: true
+      loadbalancerMode: shared
+      # service:
+      #   labels:
+      #     cilium-lb-pool: lb-pool
+
+    # gatewayAPI:
+    #   enabled: true
+
+    hubble:
+      relay:
+        enabled: true
+      ui:
+        enabled: true
+
+    l2announcements:
+      enabled: true
+
+    # Calculated based on 10 services:
+    # as per the Cilium docs - https://docs.cilium.io/en/latest/network/l2-announcements/#sizing-client-rate-limit
+    k8sClientRateLimit:
+      qps: 5
+      burst: 10

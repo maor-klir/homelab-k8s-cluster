@@ -74,6 +74,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
         workload_identity_public_key  = tls_private_key.workload_identity_sa.public_key_pem
         cilium_values = templatefile("${path.module}/helm/cilium-values.yaml.tftpl", {
           k8sServiceHost = local.control_plane_ip
+          replicas       = var.control_plane_count + var.worker_count
         })
         } : {
         general_config = templatefile("${path.module}/${var.user_data_general}", {
