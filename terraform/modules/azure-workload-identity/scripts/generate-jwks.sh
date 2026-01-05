@@ -18,7 +18,7 @@ JWKS_FILE="${TEMP_DIR}/jwks.json"
 # Write public key to file
 echo "${PUBLIC_KEY_PEM}" > "${PUBLIC_KEY_FILE}"
 
-# Check if azwi is installed, if not install it
+# Check if azwi is installed, if not download it
 if ! command -v azwi &> /dev/null; then
     AZWI_VERSION=$(curl -sf https://api.github.com/repos/Azure/azure-workload-identity/releases/latest | jq -r '.tag_name')
     if [ -z "$AZWI_VERSION" ]; then
@@ -26,11 +26,14 @@ if ! command -v azwi &> /dev/null; then
     fi
     wget -q "https://github.com/Azure/azure-workload-identity/releases/download/${AZWI_VERSION}/azwi-${AZWI_VERSION}-linux-amd64.tar.gz" -O /tmp/azwi.tar.gz
     tar -xzf /tmp/azwi.tar.gz -C /tmp
-    sudo mv /tmp/azwi /usr/local/bin/
+    chmod +x /tmp/azwi
+    AZWI_BIN="/tmp/azwi"
+else
+    AZWI_BIN="azwi"
 fi
 
 # Generate JWKS
-azwi jwks --public-keys "${PUBLIC_KEY_FILE}" --output-file "${JWKS_FILE}"
+${AZWI_BIN} jwks --public-keys "${PUBLIC_KEY_FILE}" --output-file "${JWKS_FILE}"
 
 # Read JWKS and output as JSON
 JWKS_CONTENT=$(cat "${JWKS_FILE}")
