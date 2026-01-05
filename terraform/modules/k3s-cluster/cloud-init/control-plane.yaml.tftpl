@@ -27,14 +27,18 @@ write_files:
     content: |
       ${indent(6, cilium_values)}
   - owner: root:root
-    path: /root/workload-identity-keys.sh
-    permissions: 0775
+    path: /var/lib/rancher/k3s/server/tls/workload-identity-sa.key
+    permissions: 0600
     content: |
-      ${indent(6, workload_identity_keys)}
+      ${indent(6, workload_identity_private_key)}
+  - owner: root:root
+    path: /var/lib/rancher/k3s/server/tls/workload-identity-sa.pub
+    permissions: 0644
+    content: |
+      ${indent(6, workload_identity_public_key)}
 
 runcmd:
   - systemctl enable --now qemu-guest-agent
-  - /root/workload-identity-keys.sh
   - /root/k3s.sh
   - /root/wait-for-k3s.sh
   - /root/cilium.sh

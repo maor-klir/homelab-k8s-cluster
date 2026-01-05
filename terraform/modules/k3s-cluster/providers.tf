@@ -5,6 +5,14 @@ terraform {
       source  = "bpg/proxmox"
       version = "~> 0.89"
     }
+    external = {
+      source  = "hashicorp/external"
+      version = "~> 2.3"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
   }
 }
 

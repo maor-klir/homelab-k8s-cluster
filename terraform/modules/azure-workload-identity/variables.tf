@@ -68,7 +68,7 @@ variable "azwi_service_account_name" {
   default     = "workload-identity-sa"
 }
 
-variable "jwks_file_path" {
-  description = "Path to the JWKS JSON file"
+variable "workload_identity_public_key_pem" {
+  description = "Workload identity service account public key in PEM format"
   type        = string
 }

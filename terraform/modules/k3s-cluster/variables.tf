@@ -118,12 +118,6 @@ variable "k3s_public_key" {
   type        = string
 }
 
-variable "k3s_token" {
-  description = "K3s cluster token for joining nodes"
-  type        = string
-  sensitive   = true
-}
-
 variable "k3s_cluster_port" {
   description = "K3s API server port"
   type        = number
