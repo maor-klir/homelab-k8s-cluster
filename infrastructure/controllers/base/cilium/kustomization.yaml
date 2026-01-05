@@ -3,5 +3,3 @@ kind: Kustomization
 resources:
   - repository.yaml
   - release.yaml
-  - l2-announcement-policy.yaml
-  - loadbalancer-ip-pool.yaml
