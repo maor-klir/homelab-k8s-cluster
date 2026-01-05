@@ -3,7 +3,7 @@
 This GitHub repository contains all the documentation and configuration of my first self-hosted homelab Kubernetes environment implemented through [GitOps principles](https://opengitops.dev/) and powered by K3s, Flux, and Cilium.  
 Infrastructure provisioning and lifecycle management is handled through HCP Terraform and cloud-init.  
 Manual steps on bootstrapping the environment are kept to a minimum to assure a declarative, predictable, and consistent deployment.  
-The reasoning behind selecting Cilium as a CNI can be seen [here](docs/cilium.md).
+The reasoning behind selecting Cilium as a CNI can be found [here](docs/cilium.md).
 
 A second self-hosted Kubernetes environment with a slightly different configuration can be seen [here](https://github.com/maor-klir/homelab-k8s-cluster-2).
 
@@ -16,7 +16,7 @@ This mindset forces me to take into account security, identity, scalability, and
 
 Secondly, I plan to self-host some applications for personal usage.  
 Self-hosting also drives one to be accountable and responsible to take care of the ease of deployment and maintenance operations over time, in other words - settings up proper automation and applying improvements as the environment matures and thickens.  
-That is where GitOps methodologies come into play and provide the necessary structure to treat infrastructure definition as the single source of truth, ensuring that every change is versioned, auditable, and automatically reconciled against the actual environment state. More on that can be viewed [here](docs/gitops.md).
+That is where GitOps methodologies come into play and provide the necessary structure to treat infrastructure definition as the single source of truth, ensuring that every change is versioned, auditable, and automatically reconciled against the actual environment state. More on that can be found [here](docs/gitops.md).
 
 ## 🏗️ Underlying Infrastructure
 
@@ -24,7 +24,15 @@ I started out my journey hosting Kubernetes nodes on bare metal, where each node
 Later on I have decided to transition to provisioning each node as a separate VM on a Proxmox VE highly available cluster.  
 With that shift, I have also upgraded the host machines to a 3-node HP EliteDesk 800 G4 DM 35W mini PCs (Intel Core i5-8500T (6c/6t) / 32GB RAM / 256GB SSD NVMe).  
 
-This approach enables me to provision and bootstrap clusters more quickly, easily, and with less overhead through HCP Terraform and cloud-init, eliminating manual configuration steps and ensuring consistent, reproducible deployments across environments.
+This VM-based approach embraces Infrastructure as Code best practices through a modular, multi-layered architecture:
+
+- **Terraform Modules**: Reusable `k3s-cluster` and `azure-workload-identity` modules provision infrastructure consistently across environments, parameterized by environment-specific variables (node count, IP ranges, VM IDs)
+- **Environment Separation**: Dedicated `/terraform/environments/{qa,prod}` directories instantiate modules with environment-specific configurations while maintaining DRY principles
+- **GitOps with Flux**: Kustomize-based overlays (e.g. `/infrastructure/{controllers,configs}/{base,qa,prod}`) enable declarative configuration management where base resources are patched per-environment, eliminating hardcoded values and ensuring environment-specific configurations are isolated
+- **Automated Provisioning**: Cloud-init templates combined with shell scripts bootstrap K3s clusters with OIDC configuration, workload identity keys, and Cilium CNI - fully automated from VM creation to cluster readiness
+
+This architecture ensures all infrastructure is version-controlled, auditable, and reproducible.  
+Environments can be destroyed and recreated identically, eliminating configuration drift while enabling rapid iteration and testing workflows.
 
 ## ⚙️ Core Components and Key Features
 
@@ -42,11 +50,11 @@ This approach enables me to provision and bootstrap clusters more quickly, easil
 
 ## 🔁 Infrastructure Lifecycle Management
 
-### Build --> Deploy --> Manage
+### Build ==>> Deploy ==>> Manage
 
-The K3s environment relies on infrastructure provisioning and management through HCP Terraform and cloud-init.  
+The K3s environment relies on infrastructure provisioning and management through HCP Terraform, cloud-init, and shell scripts.  
 Since all infrastructure is being provisioned on a Proxmox VE cluster that has no publicly accessible endpoint, i.e., an isolated private environment, an HCP Terraform agent must be present and running on the private network (I opted for a binary running on a small-sized VM).  
-General considerations and implementation specifics can be seen [here](docs/hcp-terraform-agents.md).
+General considerations and implementation specifics can be found [here](docs/hcp-terraform-agents.md).
 
 An overview of all the features I am utilizing:
 
@@ -91,12 +99,8 @@ Both Prometheus and Grafana are configured with persistent storage and resource 
 
 ## 🗺️ Current Environments
 
-- `k3s-staging` - a 3-node cluster, where all testing and exploration is being made
-
-Currently there is only one sole Kubernetes cluster provisioned where all testing and exploration is being made.  
-(a change to two separate environments is planned and pending - `staging` and `prod`)  
-
-This change will represent a real life scenario where (at least) two separate clusters (environments) are present, allowing for testing and exploration on one, while the other environment will host a production environment for running stable and reliable workloads, only promoted after proper testing.  
+- `k3s-qa` - a 3-node cluster (1 control plane, 2 worker nodes), where all testing and exploration is being made.
+- `k3s-prod` - a 6-node HA cluster with embedded etcd (3 control plane nodes, 3 worker nodes), a production environment for running stable and reliable workloads, only promoted after proper testing.  
 
 ---
 
