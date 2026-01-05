@@ -61,7 +61,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
           public_key = var.k3s_public_key
           hostname   = each.value.name
         })
-        k3s_config = templatefile("${path.module}/k3s-config/config.yaml.tftpl", {
+        k3s_config = templatefile("${path.module}/k3s-config/${each.key == "cp-01" ? "config-first-cp" : "config-additional-cp"}.yaml.tftpl", {
           k3s_token        = var.k3s_token
           control_plane_ip = local.control_plane_ip
           oidc_issuer_uri  = var.oidc_issuer_uri

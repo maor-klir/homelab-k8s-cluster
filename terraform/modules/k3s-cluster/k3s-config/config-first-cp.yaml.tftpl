@@ -1,0 +1,21 @@
+token: "${k3s_token}"
+flannel-backend: "none"
+disable-helm-controller: true
+disable-kube-proxy: true
+disable-network-policy: true
+disable:
+  - servicelb
+  - traefik
+cluster-init: true
+
+# --- kube-apiserver Flags ---
+kube-apiserver-arg:
+  - "service-account-issuer=${oidc_issuer_uri}"
+  - "service-account-signing-key-file=/var/lib/rancher/k3s/server/tls/workload-identity-sa.key"
+  - "service-account-key-file=/var/lib/rancher/k3s/server/tls/workload-identity-sa.pub"
+# --- kube-controller-manager Flags ---
+kube-controller-manager-arg:
+  - "service-account-private-key-file=/var/lib/rancher/k3s/server/tls/workload-identity-sa.key"
+# Add the private IP to the TLS SAN list for the certificate
+tls-san:
+  - "${control_plane_ip}"
