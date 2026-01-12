@@ -4,7 +4,8 @@ locals {
 }
 
 module "k3s_cluster" {
-  source = "../../modules/k3s-cluster"
+  source  = "app.terraform.io/maor/terraform-proxmox-k3s-cluster/proxmox"
+  version = "0.1.0"
 
   pve_node_name       = var.pve_node_name
   private_ssh_key     = var.private_ssh_key
@@ -33,7 +34,8 @@ module "k3s_cluster" {
 }
 
 module "azure_workload_identity" {
-  source = "../../modules/azure-workload-identity"
+  source  = "app.terraform.io/maor/terraform-azure-workload-identity-federation-k8s/azure"
+  version = "0.1.0"
 
   environment            = "prod"
   azure_subscription_id  = var.azure_subscription_id
