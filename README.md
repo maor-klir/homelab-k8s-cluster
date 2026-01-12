@@ -26,7 +26,7 @@ With that shift, I have also upgraded the host machines to a 3-node HP EliteDesk
 
 This VM-based approach embraces Infrastructure as Code best practices through a modular, multi-layered architecture:
 
-- **Terraform Modules**: Reusable `k3s-cluster` and `azure-workload-identity` modules provision infrastructure consistently across environments, parameterized by environment-specific variables (node count, IP ranges, VM IDs)
+- **Terraform Modules**: Reusable `k3s-cluster` and `azure-workload-identity` modules sourced from HCP Terraform private registry provision infrastructure consistently across environments, parameterized by environment-specific variables (node count, IP ranges, VM IDs). Local module definitions are maintained in `/terraform/modules` for reference and showcase implementation details
 - **Environment Separation**: Dedicated `/terraform/environments/{qa,prod}` directories instantiate modules with environment-specific configurations while maintaining DRY principles
 - **GitOps with Flux**: Kustomize-based overlays (e.g. `/infrastructure/{controllers,configs}/{base,qa,prod}`) enable declarative configuration management where base resources are patched per-environment, eliminating hardcoded values and ensuring environment-specific configurations are isolated
 - **Automated Provisioning**: Cloud-init templates combined with shell scripts bootstrap K3s clusters with OIDC configuration, workload identity keys, and Cilium CNI - fully automated from VM creation to cluster readiness
