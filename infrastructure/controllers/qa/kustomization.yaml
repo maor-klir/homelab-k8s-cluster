@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - cilium/
   - workload-identity-webhook/
-  - external-secrets-operator/
+  - cert-manager/

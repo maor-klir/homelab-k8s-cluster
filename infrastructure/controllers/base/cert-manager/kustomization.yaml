@@ -4,4 +4,3 @@ resources:
   - namespace.yaml
   - repository.yaml
   - release.yaml
-  - cloudflare-api-token-secret.yaml
