@@ -70,7 +70,7 @@ metadata:
   name: cloudflared
 data:
   config.yaml: |
-    tunnel: abs-k3s  # Name of the tunnel we want to run
+    tunnel: abs-k3s-prod  # Name of the tunnel we want to run
     credentials-file: /etc/cloudflared/credentials/credentials.json
 
     # Serves the metrics server under /metrics and the readiness server under /ready
