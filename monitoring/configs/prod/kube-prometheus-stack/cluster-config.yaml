@@ -48,9 +48,6 @@ data:
         # Unified Alerting (replaces Alertmanager)
         unified_alerting:
           enabled: true
-          ha_listen_address: "${POD_IP}:9094"
-          ha_peers: "grafana-headless:9094"
-          ha_advertise_address: "${POD_IP}:9094"
         alerting:
           enabled: false
         # Feature toggles
@@ -61,13 +58,6 @@ data:
           disable_login_form: false
         auth.anonymous:
           enabled: false
-
-      # Environment variables for HA alerting
-      env:
-        POD_IP:
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
 
       # Datasources - Thanos Query for metrics
       datasources:
