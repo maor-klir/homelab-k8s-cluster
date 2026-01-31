@@ -4,8 +4,8 @@ metadata:
   name: thanos-receive
   namespace: thanos
   annotations:
-    # Require client certificate for secure remote-write
-    nginx.ingress.kubernetes.io/auth-tls-verify-client: "optional"
+    # DNS-only on Cloudflare (no proxy) for better Prometheus remote-write performance
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 spec:
   ingressClassName: cilium
   tls:

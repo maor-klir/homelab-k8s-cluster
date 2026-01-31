@@ -32,6 +32,8 @@ data:
       ingress:
         enabled: true
         ingressClassName: cilium
+        annotations:
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
         hosts:
           - grafana.cloudandklir.com
         tls:
