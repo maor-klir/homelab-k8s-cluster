@@ -9,8 +9,8 @@ patches:
       name: thanos
     patch: |
       - op: add
-        path: /spec/valuesFrom
+        path: /spec/valuesFrom/-
         value:
-          - kind: ConfigMap
-            name: thanos-cluster-config
-            valuesKey: values.yaml
+          kind: ConfigMap
+          name: thanos-cluster-config
+          valuesKey: values.yaml
