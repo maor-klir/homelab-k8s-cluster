@@ -1,3 +1,8 @@
+resource "azurerm_resource_group" "thanos_rg" {
+  name     = var.thanos_rg
+  location = var.azwi_rg_location
+}
+
 resource "azurerm_storage_account" "thanos_storage_account" {
   name                            = var.thanos_storage_account_name
   resource_group_name             = var.thanos_rg
