@@ -72,10 +72,9 @@ spec:
           maxSize: 100000
 
     # ============================================
-    # GRAFANA - Disabled by default (enabled in prod overlay)
+    # GRAFANA - Configuration via overlay
     # ============================================
-    grafana:
-      enabled: false
+    # grafana.enabled is set per-environment in configs overlay
 
     # ============================================
     # ALERTMANAGER - Disabled (using Grafana Unified Alerting)
