@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-cluster-config
+  namespace: monitoring
+data:
+  values.yaml: |
+    prometheus:
+      prometheusSpec:
+        externalLabels:
+          cluster: qa
+          environment: qa
+        # Remote write to central Thanos Receive on Prod cluster
+        remoteWrite:
+          - url: https://thanos-receive.cloudandklir.com/api/v1/receive
+            writeRelabelConfigs:
+              - sourceLabels: [__name__]
+                regex: ".*"
+                action: keep
+            # Queue configuration for reliability
+            queueConfig:
+              capacity: 10000
+              maxShards: 50
+              minShards: 1
+              maxSamplesPerSend: 5000
+              batchSendDeadline: 30s
+              minBackoff: 1s
+              maxBackoff: 5m
+    # Grafana disabled on QA - central Grafana is on Prod
+    grafana:
+      enabled: false

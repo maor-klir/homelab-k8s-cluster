@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: thanos-receive
+  namespace: thanos
+  annotations:
+    # Require client certificate for secure remote-write
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "optional"
+spec:
+  ingressClassName: cilium
+  tls:
+    - hosts:
+        - thanos-receive.cloudandklir.com
+      secretName: thanos-receive-tls
+  rules:
+    - host: thanos-receive.cloudandklir.com
+      http:
+        paths:
+          - path: /api/v1/receive
+            pathType: Prefix
+            backend:
+              service:
+                # stevehipwell chart names the receive router service as thanos-receive-router
+                name: thanos-receive-router
+                port:
+                  number: 19291

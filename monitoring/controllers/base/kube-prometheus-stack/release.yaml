@@ -26,68 +26,88 @@ spec:
         target:
           kind: PrometheusRule
   values:
+    # ============================================
+    # PROMETHEUS - Remote Write Mode
+    # ============================================
     prometheus:
       prometheusSpec:
+        # External labels for multi-cluster identification
+        externalLabels:
+          cluster: "${CLUSTER_NAME}"
+          environment: "${ENVIRONMENT}"
+        # Replica label for deduplication in Thanos
+        replicaExternalLabelName: prometheus_replica
+        # Remote write to Thanos Receive
+        remoteWrite:
+          - url: "${THANOS_RECEIVE_URL}"
+            writeRelabelConfigs:
+              - sourceLabels: [__name__]
+                regex: ".*"
+                action: keep
+        # Shorter local retention since data is in Thanos
+        retention: 6h
+        retentionSize: "8GB"
+        # Resource allocation
         resources:
           requests:
-            memory: "2Gi"
-            cpu: "500m"
+            memory: "1Gi"
+            cpu: "250m"
           limits:
-            memory: "4Gi"
-            cpu: "2000m"
+            memory: "2Gi"
+            cpu: "1000m"
+        # Local storage (reduced since using remote-write)
         storageSpec:
           volumeClaimTemplate:
             spec:
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: 50Gi
-        retention: 30d
-        retentionSize: "45GB" # Should be slightly less than storage (50Gi)
+                  storage: 10Gi
+        # Enable features for better observability
+        enableFeatures:
+          - remote-write-receiver
+          - exemplar-storage
+        # Exemplar storage for trace correlation
+        exemplars:
+          maxSize: 100000
 
+    # ============================================
+    # GRAFANA - Disabled by default (enabled in prod overlay)
+    # ============================================
     grafana:
-      admin:
-        existingSecret: grafana-admin-credentials
-        userKey: admin-user
-        passwordKey: admin-password
-      ingress:
-        enabled: true
-        ingressClassName: cilium
-        hosts:
-          - grafana-k3s.cloudandklir.com
-        ## TLS configuration for grafana Ingress
-        ## Secret must be manually created in the namespace
-        tls:
-          - secretName: grafana-tls
-            hosts:
-              - grafana-k3s.cloudandklir.com
-      # Enable Grafana's unified alerting (uses built-in alert manager)
-      grafana.ini:
-        unified_alerting:
-          enabled: true
-        alerting:
-          enabled: false # Disable legacy alerting
-      datasources:
-        datasources.yaml:
-          apiVersion: 1
-          datasources:
-            - name: Prometheus
-              type: prometheus
-              url: http://kube-prometheus-stack-prometheus:9090
-              isDefault: true
-      persistence:
-        enabled: true
-        size: 10Gi
-      # Disable init-chown-data container to avoid permission issues with local-path-provisioner
-      initChownData:
-        enabled: false
-      resources:
-        requests:
-          memory: "256Mi"
-          cpu: "100m"
-        limits:
-          memory: "512Mi"
-          cpu: "500m"
-    # Disable the bundled Alertmanager as we are using Grafana's unified alerting
+      enabled: false
+
+    # ============================================
+    # ALERTMANAGER - Disabled (using Grafana Unified Alerting)
+    # ============================================
     alertmanager:
       enabled: false
+
+    # ============================================
+    # ADDITIONAL SCRAPE CONFIGS
+    # ============================================
+    additionalScrapeConfigs: []
+
+    # ============================================
+    # SERVICE MONITORS
+    # ============================================
+    kubeApiServer:
+      enabled: true
+    kubelet:
+      enabled: true
+    kubeControllerManager:
+      enabled: true
+    coreDns:
+      enabled: true
+    kubeEtcd:
+      enabled: true
+    kubeScheduler:
+      enabled: true
+    kubeProxy:
+      enabled: true
+    kubeStateMetrics:
+      enabled: true
+    nodeExporter:
+      enabled: true
+    prometheusOperator:
+      enabled: true
