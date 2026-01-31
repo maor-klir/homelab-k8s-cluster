@@ -124,3 +124,8 @@ variable "thanos_storage_account_name" {
   type        = string
   description = "Thanos storage account name"
 }
+
+variable "thanos_rg" {
+  type        = string
+  description = "Thanos resource group name"
+}
