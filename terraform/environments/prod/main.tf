@@ -35,7 +35,7 @@ module "k3s_cluster" {
 
 module "azure_workload_identity" {
   source  = "app.terraform.io/maor/terraform-azure-workload-identity-federation-k8s/azure"
-  version = "0.1.0"
+  version = "0.2.2"
 
   environment            = "prod"
   azure_subscription_id  = var.azure_subscription_id

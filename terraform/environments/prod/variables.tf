@@ -115,3 +115,17 @@ variable "azwi_service_account_name" {
   description = "Kubernetes service account name for Azure Workload Identity"
   default     = "workload-identity-sa"
 }
+
+######################################
+##### Azure variables for Thanos #####
+######################################
+
+variable "thanos_storage_account_name" {
+  type        = string
+  description = "Thanos storage account name"
+}
+
+variable "thanos_rg" {
+  type        = string
+  description = "Thanos resource group name"
+}
