@@ -21,3 +21,6 @@ akv_azwi_name                  = "azwi-kv-k3s-prod-122025"
 akv_azwi_location              = "West Europe"
 azwi_service_account_name      = "workload-identity-sa"
 azwi_service_account_namespace = "external-secrets-operator"
+
+# Azure variables for Thanos
+thanos_storage_account_name = "thanosstoragek3sprod012026"

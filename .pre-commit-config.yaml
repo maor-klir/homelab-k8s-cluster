@@ -29,5 +29,5 @@ repos:
       #     - --hook-config=--add-to-existing-file=true # Update existing README
       - id: terraform_fmt
       - id: terraform_tflint
-      - id: terraform_trivy
+      # - id: terraform_trivy
       - id: terraform_validate

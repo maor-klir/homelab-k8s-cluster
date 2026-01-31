@@ -27,3 +27,8 @@ output "application_id" {
   description = "The application ID"
   value       = azuread_application.azwi_application.client_id
 }
+
+output "resource_group_name" {
+  description = "The name of the Azure Workload Identity resource group"
+  value       = azurerm_resource_group.azwi_rg.name
+}
