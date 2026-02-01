@@ -23,5 +23,5 @@ azwi_service_account_name      = "workload-identity-sa"
 azwi_service_account_namespace = "external-secrets-operator"
 
 # Azure variables for Thanos
-thanos_storage_account_name = "thanosak3sprod012026"
+thanos_storage_account_name = "thanossak3sprod012026"
 thanos_rg                   = "observability-proxmox-k3s"
