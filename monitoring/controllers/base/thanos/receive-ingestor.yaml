@@ -95,9 +95,11 @@ spec:
             - name: data
               mountPath: /var/thanos/receive
             - name: objstore-config
-              mountPath: /etc/thanos
+              mountPath: /etc/thanos/objstore.yaml
+              subPath: objstore.yaml
             - name: hashring-config
-              mountPath: /etc/thanos
+              mountPath: /etc/thanos/hashrings.json
+              subPath: hashrings.json
           livenessProbe:
             httpGet:
               path: /-/healthy

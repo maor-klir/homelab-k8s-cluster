@@ -90,7 +90,8 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: hashring-config
-              mountPath: /etc/thanos
+              mountPath: /etc/thanos/hashrings.json
+              subPath: hashrings.json
           livenessProbe:
             httpGet:
               path: /-/healthy

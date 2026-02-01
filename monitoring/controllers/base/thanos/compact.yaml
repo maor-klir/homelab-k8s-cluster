@@ -71,7 +71,8 @@ spec:
             - name: data
               mountPath: /var/thanos/compact
             - name: objstore-config
-              mountPath: /etc/thanos
+              mountPath: /etc/thanos/objstore.yaml
+              subPath: objstore.yaml
           livenessProbe:
             httpGet:
               path: /-/healthy
