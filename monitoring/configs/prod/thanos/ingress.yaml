@@ -20,7 +20,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                # stevehipwell chart names the receive router service as thanos-receive-router
                 name: thanos-receive-router
                 port:
                   number: 19291

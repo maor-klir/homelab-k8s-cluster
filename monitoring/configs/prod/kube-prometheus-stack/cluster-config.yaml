@@ -11,7 +11,6 @@ data:
           cluster: prod
           environment: prod
         remoteWrite:
-          # stevehipwell chart names the receive router service as thanos-receive-router
           - url: http://thanos-receive-router.thanos.svc.cluster.local:19291/api/v1/receive
             writeRelabelConfigs:
               - sourceLabels: [__name__]
@@ -64,8 +63,6 @@ data:
         datasources.yaml:
           apiVersion: 1
           datasources:
-            # Thanos Query Frontend - Federated metrics from all clusters
-            # stevehipwell chart uses port 10902 for query-frontend HTTP
             - name: Thanos
               type: prometheus
               uid: thanos
