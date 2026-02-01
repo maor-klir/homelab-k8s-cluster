@@ -52,6 +52,7 @@ data:
           cpu: "500m"
       persistence:
         enabled: true
+        storageClass: local-path
         accessMode: ReadWriteOnce
         size: 20Gi
 
@@ -122,6 +123,7 @@ data:
             cpu: "1000m"
         persistence:
           enabled: true
+          storageClass: local-path
           accessMode: ReadWriteOnce
           size: 20Gi
       router:
@@ -169,5 +171,6 @@ data:
           cpu: "500m"
       persistence:
         enabled: true
+        storageClass: local-path
         accessMode: ReadWriteOnce
         size: 10Gi
