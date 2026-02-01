@@ -43,6 +43,7 @@ spec:
       labels:
         app.kubernetes.io/name: thanos
         app.kubernetes.io/component: store-gateway
+        azure.workload.identity/use: "true"
     spec:
       serviceAccountName: workload-identity-sa
       securityContext:

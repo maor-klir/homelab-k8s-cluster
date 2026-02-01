@@ -39,6 +39,7 @@ spec:
       labels:
         app.kubernetes.io/name: thanos
         app.kubernetes.io/component: compact
+        azure.workload.identity/use: "true"
     spec:
       serviceAccountName: workload-identity-sa
       securityContext:
