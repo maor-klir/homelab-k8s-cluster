@@ -3,9 +3,9 @@
 This GitHub repository contains all the documentation and configuration of my first self-hosted homelab Kubernetes environment implemented through [GitOps principles](https://opengitops.dev/) and powered by K3s, Flux, and Cilium.  
 Infrastructure provisioning and lifecycle management is handled through HCP Terraform and cloud-init.  
 Manual steps on bootstrapping the environment are kept to a minimum to assure a declarative, predictable, and consistent deployment.  
-The reasoning behind selecting Cilium as a CNI can be found [here](docs/cilium.md).
+The reasoning behind selecting Cilium as a CNI can be found at [docs/cilium.md](docs/cilium.md).
 
-A second self-hosted Kubernetes environment with a slightly different configuration can be seen [here](https://github.com/maor-klir/homelab-k8s-cluster-2).
+A second self-hosted Kubernetes environment with a slightly different configuration can be found [here](https://github.com/maor-klir/homelab-k8s-cluster-2).
 
 ## 📖 Introduction
 
@@ -16,7 +16,7 @@ This mindset forces me to take into account security, identity, scalability, and
 
 Secondly, I plan to self-host some applications for personal usage.  
 Self-hosting also drives one to be accountable and responsible to take care of the ease of deployment and maintenance operations over time, in other words - settings up proper automation and applying improvements as the environment matures and thickens.  
-That is where GitOps methodologies come into play and provide the necessary structure to treat infrastructure definition as the single source of truth, ensuring that every change is versioned, auditable, and automatically reconciled against the actual environment state. More on that can be found [here](docs/gitops.md).
+That is where GitOps methodologies come into play and provide the necessary structure to treat infrastructure definition as the single source of truth, ensuring that every change is versioned, auditable, and automatically reconciled against the actual environment state. More on that can be found at [docs/gitops.md](docs/gitops.md).
 
 ## 🏗️ Underlying Infrastructure
 
@@ -50,11 +50,11 @@ Environments can be destroyed and recreated identically, eliminating configurati
 
 ## 🔁 Infrastructure Lifecycle Management
 
-### Build ==>> Deploy ==>> Manage
+### Build → Deploy → Manage
 
 The K3s environment relies on infrastructure provisioning and management through HCP Terraform, cloud-init, and shell scripts.  
 Since all infrastructure is being provisioned on a Proxmox VE cluster that has no publicly accessible endpoint, i.e., an isolated private environment, an HCP Terraform agent must be present and running on the private network (I opted for a binary running on a small-sized VM).  
-General considerations and implementation specifics can be found [here](docs/hcp-terraform-agents.md).
+General considerations and implementation specifics can be found at [docs/hcp-terraform-agents.md](docs/hcp-terraform-agents.md).
 
 An overview of all the features I am utilizing:
 
@@ -77,20 +77,23 @@ An overview of all the features I am utilizing:
   It allows HCP Terraform to present information about a Terraform workload to an external system – like its workspace, organization, or whether it’s a plan or apply – and allows other external systems to verify that the information is accurate.  
   This workflow is built on the [OpenID Connect protocol](https://openid.net/connect/), a trusted standard for verifying identity across different systems.
 
-## 📊 Monitoring
+## 📊 Observability
 
-Observability tools are essential and highly important when provisioning and maintaining any modern environment.  
-The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is deployed as the cluster's monitoring solution, providing comprehensive metrics collection, visualization, and alerting capabilities.  
+A federated metrics architecture using Prometheus for collection and Thanos for long-term storage and multi-cluster querying.  
+Both Prod and the QA clusters remote-write to a centralized Thanos instance running in Prod, providing unified observability across all environments via a single Grafana dashboard.
 
-The stack includes:
+**Key components:**
 
-- [Prometheus](https://prometheus.io/) - metrics collection and storage with 30-day retention and 50Gi persistent storage
-- [Grafana](https://grafana.com/) - visualization dashboards with unified alerting for alert management and notifications
+- [Prometheus](https://prometheus.io/) - deployed through the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack). Scrapes cluster metrics with 6h local retention, remote-writes everything to Thanos Receive
+- [Thanos](https://thanos.io/) - horizontally scalable query and storage layer with six components (Query, Query Frontend, Receive Router, Receive Ingestor, Store Gateway, Compact). Deployed as native Kubernetes manifests
+- [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs) - long-term metrics persistence with unlimited retention, automatic downsampling to 90d/180d/365d resolution tiers, ZRS replication
+- [Grafana](https://grafana.com/) - visualization dashboards with unified alerting for alert management and notifications. A single centralized instance is deployed. Provides a unified dashboard view across all clusters
 - [Kube-State-Metrics](https://github.com/kubernetes/kube-state-metrics) - generates metrics about Kubernetes object states
 - [Node Exporter](https://github.com/prometheus/node_exporter) - exposes hardware and OS-level metrics from cluster nodes
 - [Grafana Alerting](https://grafana.com/docs/grafana/latest/alerting/) - unified alerting system for alert management and delivery, replacing the traditional Prometheus Alertmanager
 
-Both Prometheus and Grafana are configured with persistent storage and resource constraints to ensure reliable long-term operation.  
+All Thanos components authenticate to Azure via Workload Identity Federation (no stored credentials).  
+Architecture details, data flow, failure scenarios, and design rationale specifics are available at [docs/observability.md](docs/observability.md).  
 
 ## 📦 Deployed Applications
 
