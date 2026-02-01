@@ -20,6 +20,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: thanos-receive-router
+                name: thanos-receive-ingestor-headless
                 port:
                   number: 19291

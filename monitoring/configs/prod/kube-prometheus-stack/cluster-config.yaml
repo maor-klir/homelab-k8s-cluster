@@ -11,7 +11,7 @@ data:
           cluster: prod
           environment: prod
         remoteWrite:
-          - url: http://thanos-receive-router.thanos.svc.cluster.local:19291/api/v1/receive
+          - url: http://thanos-receive-ingestor-headless.thanos.svc.cluster.local:19291/api/v1/receive
             writeRelabelConfigs:
               - sourceLabels: [__name__]
                 regex: ".*"
