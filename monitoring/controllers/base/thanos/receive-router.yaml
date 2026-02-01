@@ -89,6 +89,8 @@ spec:
               containerPort: 19291
               protocol: TCP
           volumeMounts:
+            - name: data
+              mountPath: /var/thanos
             - name: hashring-config
               mountPath: /etc/thanos/hashrings.json
               subPath: hashrings.json
@@ -128,6 +130,8 @@ spec:
             runAsNonRoot: true
             runAsUser: 65534
       volumes:
+        - name: data
+          emptyDir: {}
         - name: hashring-config
           configMap:
             name: thanos-receive-hashring
