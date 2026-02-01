@@ -20,7 +20,7 @@ locals {
 resource "azuread_application_federated_identity_credential" "additional_credentials" {
   for_each = local.additional_federated_credentials
 
-  application_id = module.azure_workload_identity.application_id
+  application_id = "/applications/${module.azure_workload_identity.application_object_id}"
   display_name   = "kubernetes-federated-credential-prod-${each.key}"
   description    = each.value.description
   audiences      = ["api://AzureADTokenExchange"]
