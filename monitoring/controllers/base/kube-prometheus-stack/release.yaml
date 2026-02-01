@@ -27,23 +27,14 @@ spec:
           kind: PrometheusRule
   values:
     # ============================================
-    # PROMETHEUS - Remote Write Mode
+    # PROMETHEUS - Base Configuration
     # ============================================
+    # Environment-specific values (cluster name, remoteWrite URL, etc.)
+    # are provided via ConfigMap using valuesFrom in each environment
     prometheus:
       prometheusSpec:
-        # External labels for multi-cluster identification
-        externalLabels:
-          cluster: "${CLUSTER_NAME}"
-          environment: "${ENVIRONMENT}"
         # Replica label for deduplication in Thanos
         replicaExternalLabelName: prometheus_replica
-        # Remote write to Thanos Receive
-        remoteWrite:
-          - url: "${THANOS_RECEIVE_URL}"
-            writeRelabelConfigs:
-              - sourceLabels: [__name__]
-                regex: ".*"
-                action: keep
         # Shorter local retention since data is in Thanos
         retention: 6h
         retentionSize: "8GB"
