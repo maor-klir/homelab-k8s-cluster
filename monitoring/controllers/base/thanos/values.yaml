@@ -40,9 +40,6 @@ data:
       enabled: true
       deduplication:
         enabled: true
-      serviceAccount:
-        create: true
-        automountToken: false
       resources:
         requests:
           memory: "256Mi"
@@ -62,9 +59,6 @@ data:
     query:
       enabled: true
       enableDnsDiscovery: true
-      serviceAccount:
-        create: true
-        automountToken: false
       service:
         type: ClusterIP
         grpcPort: 10901
@@ -83,9 +77,6 @@ data:
     # ============================================
     queryFrontend:
       enabled: true
-      serviceAccount:
-        create: true
-        automountToken: false
       service:
         type: ClusterIP
         httpPort: 10902
@@ -106,9 +97,6 @@ data:
       replicationFactor: 1
       retention: 6h
       ingestor:
-        serviceAccount:
-          create: true
-          automountToken: false
         service:
           grpcPort: 10901
           httpPort: 10902
@@ -127,9 +115,6 @@ data:
           accessMode: ReadWriteOnce
           size: 20Gi
       router:
-        serviceAccount:
-          create: true
-          automountToken: false
         service:
           grpcPort: 10901
           httpPort: 10902
@@ -155,9 +140,6 @@ data:
     # ============================================
     storeGateway:
       enabled: true
-      serviceAccount:
-        create: true
-        automountToken: false
       service:
         grpcPort: 10901
         httpPort: 10902
