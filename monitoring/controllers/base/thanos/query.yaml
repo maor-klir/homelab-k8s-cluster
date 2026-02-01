@@ -1,0 +1,106 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query
+  namespace: thanos
+  labels:
+    app.kubernetes.io/name: thanos
+    app.kubernetes.io/component: query
+spec:
+  type: ClusterIP
+  ports:
+    - name: grpc
+      port: 10901
+      targetPort: grpc
+      protocol: TCP
+    - name: http
+      port: 10902
+      targetPort: http
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: thanos
+    app.kubernetes.io/component: query
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-query
+  namespace: thanos
+  labels:
+    app.kubernetes.io/name: thanos
+    app.kubernetes.io/component: query
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: thanos
+      app.kubernetes.io/component: query
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: thanos
+        app.kubernetes.io/component: query
+    spec:
+      serviceAccountName: workload-identity-sa
+      securityContext:
+        fsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+      containers:
+        - name: thanos
+          image: quay.io/thanos/thanos:v0.40.1
+          imagePullPolicy: IfNotPresent
+          args:
+            - query
+            - --log.level=info
+            - --log.format=logfmt
+            - --grpc-address=0.0.0.0:10901
+            - --http-address=0.0.0.0:10902
+            - --query.replica-label=prometheus_replica
+            - --query.replica-label=replica
+            - --query.auto-downsampling
+            - --endpoint=dnssrv+_grpc._tcp.thanos-store-gateway-headless.thanos.svc.cluster.local
+            - --endpoint=dnssrv+_grpc._tcp.thanos-receive-ingestor-headless.thanos.svc.cluster.local
+          ports:
+            - name: grpc
+              containerPort: 10901
+              protocol: TCP
+            - name: http
+              containerPort: 10902
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 30
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 4
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 20
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65534

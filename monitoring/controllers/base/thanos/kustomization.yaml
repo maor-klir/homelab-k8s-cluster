@@ -1,7 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: thanos
 resources:
   - namespace.yaml
-  - repository.yaml
-  - values.yaml
-  - release.yaml
+  - query.yaml
+  - query-frontend.yaml
+  - receive-router.yaml
+  - receive-ingestor.yaml
+  - store-gateway.yaml
+  - compact.yaml
+  - objstore-config.yaml

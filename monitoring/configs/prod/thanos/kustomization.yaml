@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: thanos
 resources:
   - workload-identity-sa.yaml
-  - cluster-config.yaml
   - external-secret.yaml
   - ingress.yaml
   - tls-certificate.yaml

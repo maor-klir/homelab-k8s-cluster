@@ -3,14 +3,4 @@ kind: Kustomization
 namespace: thanos
 resources:
   - ../../base/thanos/
-patches:
-  - target:
-      kind: HelmRelease
-      name: thanos
-    patch: |
-      - op: add
-        path: /spec/valuesFrom/-
-        value:
-          kind: ConfigMap
-          name: thanos-cluster-config
-          valuesKey: values.yaml
+  - ../../../configs/prod/thanos/
