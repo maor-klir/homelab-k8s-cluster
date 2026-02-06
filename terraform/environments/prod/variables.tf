@@ -129,3 +129,41 @@ variable "thanos_rg" {
   type        = string
   description = "Thanos resource group name"
 }
+
+#################################
+### LXC cluster load balancers ###
+#################################
+
+variable "lxc_lb_count" {
+  type        = number
+  description = "The count of the LXC cluster load balancer containers"
+}
+
+variable "lxc_lb_id_start" {
+  type        = string
+  description = "First IP address of the LXC cluster load balancer stack"
+}
+
+variable "lxc_lb_memory" {
+  description = "Memory allocation for LXC cluster load balancer container (in MB)"
+  type        = number
+  default     = 512
+}
+
+variable "lxc_lb_cores" {
+  description = "CPU cores for LXC cluster load balancer container"
+  type        = number
+  default     = 2
+}
+
+variable "lxc_gateway" {
+  description = "Default gateway for LXC cluster load balancer"
+  type        = string
+  default     = "192.168.0.1"
+}
+
+variable "lxc_subnet_mask" {
+  description = "Subnet mask in CIDR notation"
+  type        = string
+  default     = "24"
+}
