@@ -18,10 +18,6 @@ terraform {
       source  = "hashicorp/azuread"
       version = "~> 3.7"
     }
-    tls = {
-      source  = "hashicorp/tls"
-      version = "~> 4.0"
-    }
   }
 
   cloud {
