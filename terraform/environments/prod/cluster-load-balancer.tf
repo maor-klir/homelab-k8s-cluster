@@ -61,21 +61,8 @@ resource "proxmox_virtual_environment_container" "lxc_lb" {
     }
     user_account {
       keys = [
-        trimspace(tls_private_key.lxc_container_key.public_key_openssh)
+        var.lb_public_key
       ]
     }
   }
-}
-
-resource "tls_private_key" "lxc_container_key" {
-  algorithm = "ED25519"
-}
-
-output "lxc_container_private_key" {
-  value     = tls_private_key.lxc_container_key.private_key_pem
-  sensitive = true
-}
-
-output "lxc_container_public_key" {
-  value = tls_private_key.lxc_container_key.public_key_openssh
 }

@@ -167,3 +167,8 @@ variable "lxc_subnet_mask" {
   type        = string
   default     = "24"
 }
+
+variable "lb_public_key" {
+  description = "Load balancer LXC user SSH public key"
+  type        = string
+}
