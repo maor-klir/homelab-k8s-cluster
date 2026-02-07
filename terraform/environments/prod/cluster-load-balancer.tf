@@ -68,8 +68,7 @@ resource "proxmox_virtual_environment_container" "lxc_lb" {
 }
 
 resource "tls_private_key" "lxc_container_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
+  algorithm = "ED25519"
 }
 
 output "lxc_container_private_key" {

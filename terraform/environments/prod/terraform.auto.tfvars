@@ -29,4 +29,4 @@ thanos_rg                   = "observability-proxmox-k3s"
 # LXC cluster load balancers
 
 lxc_lb_count    = 3
-lxc_lb_id_start = 246
+lxc_lb_id_start = 207
