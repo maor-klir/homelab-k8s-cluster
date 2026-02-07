@@ -18,13 +18,6 @@ resource "azurerm_storage_account" "thanos_storage_account" {
     }
     versioning_enabled = true
   }
-  network_rules {
-    default_action             = "Allow"
-    bypass                     = ["AzureServices"]
-    ip_rules                   = []
-    virtual_network_subnet_ids = []
-  }
-
 }
 
 resource "azurerm_storage_container" "thanos_metrics" {
