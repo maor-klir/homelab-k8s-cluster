@@ -125,13 +125,14 @@ variable "thanos_storage_account_name" {
   description = "Thanos storage account name"
 }
 
-variable "thanos_rg" {
+# General observability stack resource group
+variable "observability_rg" {
   type        = string
-  description = "Thanos resource group name"
+  description = "Observability resource group name"
 }
 
 #################################
-### LXC cluster load balancers ###
+### LXC cluster load balancer ###
 #################################
 
 variable "lxc_lb_count" {
@@ -171,4 +172,13 @@ variable "lxc_subnet_mask" {
 variable "lb_public_key" {
   description = "Load balancer LXC user SSH public key"
   type        = string
+}
+
+######################################
+##### Azure variables for Loki #######
+######################################
+
+variable "loki_storage_account_name" {
+  type        = string
+  description = "Loki storage account name"
 }
