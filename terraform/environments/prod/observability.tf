@@ -68,8 +68,14 @@ resource "azurerm_storage_account" "loki_storage_account" {
   }
 }
 
-resource "azurerm_storage_container" "loki_logs" {
-  name                  = "logs"
+resource "azurerm_storage_container" "loki_chunks" {
+  name                  = "chunks"
+  storage_account_id    = azurerm_storage_account.loki_storage_account.id
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "loki_ruler" {
+  name                  = "ruler"
   storage_account_id    = azurerm_storage_account.loki_storage_account.id
   container_access_type = "private"
 }
