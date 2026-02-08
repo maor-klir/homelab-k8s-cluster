@@ -136,3 +136,16 @@ spec:
 
     singleBinary:
       replicas: 0
+
+    # Reduce cache memory to fit cluster capacity
+    chunksCache:
+      enabled: true
+      replicas: 1
+      allocatedMemory: 512 # 512MB instead of default ~10GB
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          cpu: 200m
+          memory: 512Mi
