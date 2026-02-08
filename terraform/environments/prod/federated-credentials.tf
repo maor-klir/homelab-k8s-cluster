@@ -13,6 +13,11 @@ locals {
       service_account = "workload-identity-sa"
       description     = "Kubernetes service account federated credential for Thanos"
     }
+    loki = {
+      namespace       = "loki"
+      service_account = "workload-identity-sa"
+      description     = "Kubernetes service account federated credential for Loki"
+    }
   }
 }
 
