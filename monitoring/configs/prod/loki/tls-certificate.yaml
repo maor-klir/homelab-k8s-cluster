@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: loki-gateway-tls
+  namespace: loki
+spec:
+  secretName: loki-gateway-tls
+  issuerRef:
+    name: acme-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - loki-gateway.cloudandklir.com

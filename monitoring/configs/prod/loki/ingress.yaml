@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: loki-gateway
+  namespace: loki
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+spec:
+  ingressClassName: cilium
+  tls:
+    - hosts:
+        - loki-gateway.cloudandklir.com
+      secretName: loki-gateway-tls
+  rules:
+    - host: loki-gateway.cloudandklir.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: loki-gateway
+                port:
+                  number: 80
