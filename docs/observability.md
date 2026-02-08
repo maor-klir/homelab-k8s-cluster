@@ -119,32 +119,39 @@ Lightweight log collection agent deployed as a DaemonSet. One pod runs on every 
 ## Why This Architecture?
 
 **Multi-cluster federation**:  
+
 Both Prod and QA clusters remote-write metrics to the same Thanos instance and push logs to the same Loki instance running in prod.  
 Each cluster's Prometheus adds unique labels (cluster=prod/qa, environment=prod/qa) and Promtail adds cluster labels to enable filtering and aggregation across environments.  
-QA writes metrics to `https://thanos-receive.cloudandklir.com` and logs to `https://loki-gateway.cloudandklir.com` (both exposed via Cilium Ingress), while prod writes metrics directly to in-cluster Thanos services and logs to the same Loki Gateway Ingress endpoint.  
+QA writes metrics to `https://thanos-receive.cloudandklir.com` and logs to `https://loki-gateway.cloudandklir.com` (both exposed via Cilium Ingress), while Prod writes metrics directly to in-cluster Thanos services and logs to the same Loki Gateway Ingress endpoint.  
 Adding additional clusters requires only configuring their Prometheus remote-write endpoint and Promtail client URL—no changes to storage or query layers.  
 The single Grafana instance in Prod provides a unified view of metrics and logs across all environments.
 
 **Scalability**:  
+
 Prometheus alone doesn't scale for multi-cluster or long retention. Loki alone doesn't handle massive log volumes without horizontal scaling.
 Thanos adds horizontal scalability for metrics and unlimited retention via object storage. Loki's distributed mode allows scaling write and query paths independently.
 
 **Cost efficiency**:  
+
 Azure Blob Storage is significantly cheaper than block storage for metrics and logs.
 Loki indexes only metadata (not full-text), dramatically reducing storage costs.
 Thanos downsampling reduces metrics storage costs over time.
 
 **No credential management**:  
+
 Azure Workload Identity eliminates secret rotation burden for both Thanos and Loki. The cluster's OIDC issuer authenticates directly with Entra ID.
 
 **Separation of concerns**:  
+
 Each Thanos and Loki component has a single responsibility, making troubleshooting and scaling straightforward.
 
 **Unified observability**:  
+
 Metrics and logs in a single Grafana instance enable correlation (e.g., metrics spike → query logs from same timeframe).
 LogQL (Loki Query Language) is similar to PromQL, reducing learning curve.
 
 **GitOps native**:  
+
 Both deployments integrate cleanly with Flux and Kustomize overlays. Loki uses Helm but with explicit configuration rather than relying on chart defaults.
 
 ## Security Considerations
