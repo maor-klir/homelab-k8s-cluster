@@ -80,8 +80,8 @@ An overview of all the features I am utilizing:
 
 ## 📊 Observability
 
-A federated observability stack combining metrics (Prometheus + Thanos) and logs (Loki + Promtail), both using Azure Blob Storage for long-term persistence.
-Both Prod and the QA clusters remote-write metrics to a centralized Thanos instance and push logs to Loki running in Prod, providing unified observability across all environments via a single Grafana dashboard.
+A federated observability stack combining metrics (Prometheus + Thanos) and logs (Loki + Promtail), both using Azure Blob Storage for long-term persistence.  
+Both the Prod and the QA clusters remote-write metrics to a centralized Thanos instance and push logs to Loki running in Prod, providing unified observability across all environments via a single Grafana dashboard.
 
 ### Key components
 
@@ -93,16 +93,16 @@ Both Prod and the QA clusters remote-write metrics to a centralized Thanos insta
 
 **Logs:**
 - [Loki](https://grafana.com/oss/loki/) - horizontally scalable log aggregation system deployed in distributed mode (microservices architecture), the most production-grade of all three deployment modes. Indexes only metadata (not full-text), dramatically reducing storage costs. Stores compressed log chunks in Azure Blob Storage with 90-day retention
-- [Promtail](https://grafana.com/docs/loki/latest/send-data/promtail/) - log collection agent deployed as DaemonSet on every node. Autodiscovers pods, extracts Kubernetes metadata, and ships logs to Loki via HTTPS with basic authentication
+- [Promtail](https://grafana.com/docs/loki/latest/send-data/promtail/) - log collection agent deployed as a DaemonSet (running on every node of the cluster). Autodiscovers pods, extracts Kubernetes metadata, and ships logs to Loki via HTTPS with basic authentication
 
 **Visualization & Storage:**
 - [Grafana](https://grafana.com/) - visualization dashboards with unified alerting for alert management and notifications. A single centralized instance is deployed. Provides a unified dashboard view across all clusters for both metrics and logs
 - [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs) - long-term persistence for both metrics (Thanos) and logs (Loki). Set up with ZRS replication for durability. Metrics stored with automatic downsampling (90d raw, 180d 5m, 365d 1h resolution), logs stored as Snappy-compressed chunks with 90d retention
 - [Grafana Alerting](https://grafana.com/docs/grafana/latest/alerting/) - unified alerting system for alert management and delivery, replacing the traditional Prometheus Alertmanager
 
-All Thanos and Loki components authenticate to Azure via Workload Identity Federation (no stored credentials).
-External access to Loki is secured via Cilium Ingress with Let's Encrypt TLS and basic authentication.
-Architecture details, data flow, failure scenarios, and design rationale specifics are available at [docs/observability.md](docs/observability.md).  
+All Thanos and Loki components authenticate to Azure via Workload Identity Federation (no stored credentials).  
+External access to Loki is secured via Cilium Ingress with Let's Encrypt TLS and basic authentication.  
+Architecture details, data flow, and design rationale specifics are available at [docs/observability.md](docs/observability.md).  
 
 ## 📦 Deployed Applications
 

@@ -2,8 +2,8 @@
 
 ## Overview
 
-A federated observability stack combining metrics (Prometheus + Thanos) and logs (Loki + Promtail), both using Azure Blob Storage for long-term persistence.
-Both Prod and the QA clusters remote-write metrics to a centralized Thanos instance and push logs to Loki running in Prod, providing unified observability across all environments via a single Grafana dashboard.
+A federated observability stack combining metrics (Prometheus + Thanos) and logs (Loki + Promtail), both using Azure Blob Storage for long-term persistence.  
+Both the Prod and the QA clusters remote-write metrics to a centralized Thanos instance and push logs to Loki running in Prod, providing unified observability across all environments via a single Grafana dashboard.
 
 ### Metrics Data Flow
 
@@ -34,6 +34,8 @@ Both Prod and the QA clusters remote-write metrics to a centralized Thanos insta
 
 The metrics collection engine. Scrapes targets across the cluster and forwards all data to Thanos for long-term storage.
 
+**Key Features:**  
+
 - Short retention (6h) - acts as metrics buffer, not long-term storage
 - Remote-writes all metrics to Thanos Receive
 - Includes kube-state-metrics and node-exporter
@@ -41,7 +43,11 @@ The metrics collection engine. Scrapes targets across the cluster and forwards a
 
 ### Thanos
 
-Horizontally scalable metrics storage and query layer built on top of Prometheus. Thanos adds long-term retention, multi-cluster aggregation, and deduplication capabilities that Prometheus alone cannot provide. Deployed as native Kubernetes manifests (not Helm) for full control over configuration and component independence.
+Horizontally scalable metrics storage and query layer built on top of Prometheus.  
+Thanos adds long-term retention, multi-cluster aggregation, and deduplication capabilities that Prometheus alone cannot provide.  
+Deployed as native Kubernetes manifests (not Helm) for full control over configuration and component independence.
+
+**Key Features:**  
 
 - Deduplicates metrics from replicated Prometheus instances via content-based addressing
 - Stores block-based data in Azure Blob Storage with automatic tiered downsampling
@@ -83,7 +89,9 @@ Centralized visualization and alerting interface. Single instance in prod cluste
 
 Horizontally scalable log aggregation and query system inspired by Prometheus. Deployed in distributed mode (microservices architecture) via Helm, the most production-grade of all three deployment modes (monolithic, simple scalable, distributed).
 
-- Indexes metadata only (namespace, pod, container, labels), not log content — dramatically reduces storage costs
+**Key Features:**  
+
+- Indexes only metadata (namespace, pod, container, labels), not log content — dramatically reduces storage costs
 - Compresses log chunks with Snappy before writing to Azure Blob Storage
 - 90-day retention with automatic deletion via Compactor
 - Authentication via Azure Workload Identity (no stored credentials)
@@ -104,7 +112,7 @@ Horizontally scalable log aggregation and query system inspired by Prometheus. D
 
 ### Promtail
 
-Lightweight log collection agent deployed as a DaemonSet. One pod runs on every node (including control plane).
+Lightweight log collection agent deployed as a DaemonSet (one agent pod runs on every node in the cluster).
 
 - Tails container logs from `/var/log/pods/*`
 - Autodiscovers all pods via Kubernetes API
