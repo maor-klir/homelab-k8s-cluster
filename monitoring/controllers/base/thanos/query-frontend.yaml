@@ -45,7 +45,7 @@ spec:
         runAsUser: 65534
       containers:
         - name: thanos
-          image: quay.io/thanos/thanos:v0.40.1
+          image: quay.io/thanos/thanos:v0.41.0
           imagePullPolicy: IfNotPresent
           args:
             - query-frontend
