@@ -1,0 +1,166 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: alloy
+  namespace: alloy
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: alloy
+      version: "0.x"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: loki
+      interval: 12h
+  driftDetection:
+    mode: enabled
+  valuesFrom:
+    - kind: Secret
+      name: alloy-loki-credentials
+      valuesKey: username
+      targetPath: alloy.extraEnv[0].value
+    - kind: Secret
+      name: alloy-loki-credentials
+      valuesKey: password
+      targetPath: alloy.extraEnv[1].value
+  values:
+    alloy:
+      # Extra environment variables for Loki credentials
+      extraEnv:
+        - name: LOKI_USERNAME
+          value: "" # Populated from valuesFrom
+        - name: LOKI_PASSWORD
+          value: "" # Populated from valuesFrom
+
+      configMap:
+        create: true
+
+      # Alloy River configuration
+      config: |
+        // Discover Kubernetes pod logs
+        discovery.kubernetes "pods" {
+          role = "pod"
+        }
+
+        // Relabel discovered targets
+        discovery.relabel "pods" {
+          targets = discovery.kubernetes.pods.targets
+
+          // Only scrape running pods
+          rule {
+            source_labels = ["__meta_kubernetes_pod_phase"]
+            regex         = "Pending|Succeeded|Failed|Completed"
+            action        = "drop"
+          }
+
+          // Add namespace label
+          rule {
+            source_labels = ["__meta_kubernetes_namespace"]
+            target_label  = "namespace"
+          }
+
+          // Add pod name label
+          rule {
+            source_labels = ["__meta_kubernetes_pod_name"]
+            target_label  = "pod"
+          }
+
+          // Add container name label
+          rule {
+            source_labels = ["__meta_kubernetes_pod_container_name"]
+            target_label  = "container"
+          }
+
+          // Add app label if exists
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app"]
+            target_label  = "app"
+          }
+
+          // Add job label from app.kubernetes.io/name if exists
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+            target_label  = "job"
+          }
+
+          // Set path to read logs from
+          rule {
+            source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+            target_label  = "__path__"
+            separator     = "/"
+            replacement   = "/var/log/pods/*$1/*.log"
+          }
+        }
+
+        // Collect logs from discovered pod targets
+        loki.source.kubernetes "pods" {
+          targets    = discovery.relabel.pods.output
+          forward_to = [loki.process.pipeline.receiver]
+        }
+
+        // Process logs: parse CRI format and drop excluded namespaces
+        loki.process "pipeline" {
+          // Parse CRI format logs (containerd/cri-o)
+          stage.cri {}
+
+          // Drop logs from low-value namespaces
+          stage.drop {
+            source     = "namespace"
+            expression = "(kube-public|kube-node-lease)"
+            drop_counter_reason = "excluded_namespace"
+          }
+
+          forward_to = [loki.write.default.receiver]
+        }
+
+        // Write logs to Loki
+        loki.write "default" {
+          endpoint {
+            url        = "https://loki-gateway.cloudandklir.com/loki/api/v1/push"
+            tenant_id  = "1"
+
+            basic_auth {
+              username = env("LOKI_USERNAME")
+              password = env("LOKI_PASSWORD")
+            }
+
+            tls_config {
+              insecure_skip_verify = false
+            }
+          }
+        }
+
+    # DaemonSet mode - run on every node
+    controller:
+      type: daemonset
+
+    # Resource limits
+    resources:
+      limits:
+        cpu: 200m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+
+    # SecurityContext - run as root to read log files, but without privileged mode
+    securityContext:
+      runAsUser: 0
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+
+    # Tolerations to run on all nodes including control plane
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+
+    # ServiceMonitor for Prometheus metrics
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
