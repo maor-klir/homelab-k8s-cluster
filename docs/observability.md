@@ -2,7 +2,7 @@
 
 ## Overview
 
-A federated observability stack combining metrics (Prometheus + Thanos) and logs (Loki + Promtail), both using Azure Blob Storage for long-term persistence.  
+A federated observability stack combining metrics (Prometheus + Thanos) and logs (Loki + Grafana Alloy), both using Azure Blob Storage for long-term persistence.  
 Both the Prod and the QA clusters remote-write metrics to a centralized Thanos instance and push logs to Loki running in Prod, providing unified observability across all environments via a single Grafana dashboard.
 
 ### Metrics Data Flow
@@ -18,9 +18,9 @@ Both the Prod and the QA clusters remote-write metrics to a centralized Thanos i
 
 ### Logs Data Flow
 
-1. Promtail DaemonSet tails log files from `/var/log/pods/*` on every node
-2. Promtail extracts Kubernetes metadata (namespace, pod, container, labels) and parses CRI format logs
-3. Promtail ships logs to Loki Gateway via HTTPS with basic authentication
+1. Grafana Alloy DaemonSet discovers pod log streams via the Kubernetes API on every node
+2. Grafana Alloy extracts Kubernetes metadata (namespace, pod, container, labels) and parses CRI format logs
+3. Grafana Alloy ships logs to Loki Gateway via HTTPS with basic authentication
 4. Loki Gateway authenticates requests and forwards to Loki Distributor
 5. Loki Distributor validates log entries and forwards to Loki Ingester replicas (consistent hashing)
 6. Loki Ingester builds compressed chunks in memory and periodically flushes to Azure Blob Storage
@@ -110,28 +110,25 @@ Horizontally scalable log aggregation and query system inspired by Prometheus. D
 | Chunks Cache | 1 | Caches frequently accessed log chunks in memory (512MB) | Reduces object storage reads; single instance sufficient for current load |
 | Canary | DaemonSet | Pushes synthetic logs and queries them back to verify end-to-end pipeline health | One pod per node; exposes Prometheus metrics on push latency, query success, and missing entries |
 
-### Promtail
+### Grafana Alloy
 
-Lightweight log collection agent deployed as a DaemonSet (one agent pod runs on every node in the cluster).
+Log collection agent deployed as a DaemonSet (one agent pod runs on every node in the cluster), configured using Alloy's River language.
 
-- Tails container logs from `/var/log/pods/*`
-- Autodiscovers all pods via Kubernetes API
-- Extracts metadata (namespace, pod, container, app labels)
-- Parses CRI format logs (containerd/cri-o)
+- Autodiscovers all pods via the Kubernetes API — no host filesystem access required
+- Extracts Kubernetes metadata (namespace, pod, container, app labels) and parses CRI format logs
 - Filters out low-value namespaces (kube-public, kube-node-lease)
 - Ships logs to Loki Gateway via HTTPS with basic authentication
-- Tracks processed log positions to prevent duplication after restarts
-- Runs as root (UID 0) to read log files but without privileged mode
-- Resource requests: 100m CPU, 64Mi memory; limits: 200m CPU, 128Mi memory
+- Exposes its own metrics via ServiceMonitor (component health, ingestion rate, write errors) — scraped by Prometheus
+- Runs as root (UID 0) without privileged mode; WAL backed by an `emptyDir` volume
 
 ## Why This Architecture?
 
 #### Multi-cluster federation:
 
 Both Prod and QA clusters remote-write metrics to the same Thanos instance and push logs to the same Loki instance running in prod.  
-Each cluster's Prometheus adds unique labels (cluster=prod/qa, environment=prod/qa) and Promtail adds cluster labels to enable filtering and aggregation across environments.  
+Each cluster's Prometheus adds unique labels (cluster=prod/qa, environment=prod/qa) and Alloy adds matching `cluster` and `environment` static labels to all log streams, enabling filtering and aggregation across environments.  
 QA writes metrics to `https://thanos-receive.cloudandklir.com` and logs to `https://loki-gateway.cloudandklir.com` (both exposed via Cilium Ingress), while Prod writes metrics directly to in-cluster Thanos services and logs to the same Loki Gateway Ingress endpoint.  
-Adding additional clusters requires only configuring their Prometheus remote-write endpoint and Promtail client URL—no changes to storage or query layers.  
+Adding additional clusters requires only configuring their Prometheus remote-write endpoint and Alloy `loki.write` endpoint URL—no changes to storage or query layers.  
 The single Grafana instance in Prod provides a unified view of metrics and logs across all environments.
 
 #### Scalability:
@@ -172,7 +169,7 @@ Both deployments integrate cleanly with Flux and Kustomize overlays. Loki uses H
 
 **Logs (Loki):**
 - Loki components run as non-root with dropped capabilities
-- Promtail runs as root (UID 0) to read log files but without privileged mode
+- Alloy runs as root (UID 0) but without privileged mode; uses Kubernetes API for log collection (no host filesystem mounts)
 - Read-only root filesystems
 - External access via Cilium Ingress with Let's Encrypt TLS
 - Gateway protected by basic authentication (htpasswd format)
@@ -181,4 +178,4 @@ Both deployments integrate cleanly with Flux and Kustomize overlays. Loki uses H
 **Secrets Management:**
 - All secrets pulled from Azure Key Vault via External Secrets Operator
 - Basic auth credentials for Loki stored as htpasswd hash (not plaintext)
-- Promtail credentials injected via Helm valuesFrom (Secret references)
+- Alloy credentials injected as environment variables via Helm valuesFrom (Secret references)
