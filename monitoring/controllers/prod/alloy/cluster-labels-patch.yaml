@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: alloy
+  namespace: alloy
+spec:
+  values:
+    alloy:
+      extraEnv:
+        - name: LOKI_USERNAME
+          value: "" # Populated from valuesFrom
+        - name: LOKI_PASSWORD
+          value: "" # Populated from valuesFrom
+        - name: CLUSTER_NAME
+          value: "k3s-prod"
+        - name: ENVIRONMENT
+          value: "prod"

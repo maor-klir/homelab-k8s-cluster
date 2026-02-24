@@ -27,12 +27,16 @@ spec:
       targetPath: alloy.extraEnv[1].value
   values:
     alloy:
-      # Extra environment variables for Loki credentials
+      # Extra environment variables for Loki credentials and cluster identification
       extraEnv:
         - name: LOKI_USERNAME
           value: "" # Populated from valuesFrom
         - name: LOKI_PASSWORD
           value: "" # Populated from valuesFrom
+        - name: CLUSTER_NAME
+          value: "" # Overridden per environment overlay
+        - name: ENVIRONMENT
+          value: "" # Overridden per environment overlay
 
       configMap:
         create: true
@@ -91,7 +95,7 @@ spec:
             forward_to = [loki.process.pipeline.receiver]
           }
 
-          // Process logs: parse CRI format and drop excluded namespaces
+          // Process logs: parse CRI format, drop excluded namespaces, add cluster labels
           loki.process "pipeline" {
             // Parse CRI format logs (containerd/cri-o)
             stage.cri {}
@@ -101,6 +105,14 @@ spec:
               source              = "namespace"
               expression          = "(kube-public|kube-node-lease)"
               drop_counter_reason = "excluded_namespace"
+            }
+
+            // Add cluster and environment labels for multi-cluster log aggregation
+            stage.static_labels {
+              values = {
+                cluster     = env("CLUSTER_NAME"),
+                environment = env("ENVIRONMENT"),
+              }
             }
 
             forward_to = [loki.write.default.receiver]

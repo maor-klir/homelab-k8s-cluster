@@ -4,3 +4,5 @@ namespace: alloy
 resources:
   - ../../base/alloy/
   - ../../../configs/prod/alloy/
+patches:
+  - path: cluster-labels-patch.yaml
