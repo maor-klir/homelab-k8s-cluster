@@ -14,14 +14,22 @@ timezone: Europe/Berlin
 keyboard:
   layout: us
 
-# SSH hardening
 write_files:
+  # SSH hardening
   - path: /etc/ssh/sshd_config.d/01-ssh-hardening.conf
     content: |
       PermitRootLogin no
       PasswordAuthentication no
       ChallengeResponseAuthentication no
       UsePAM yes
+
+  # Raise inotify limits to support Kubernetes log collection agents (e.g. Grafana Alloy)
+  # Default max_user_instances=128 and max_user_watches=8192 are easily exhausted
+  # when watching pod log streams across many containers on a node.
+  - path: /etc/sysctl.d/99-inotify.conf
+    content: |
+      fs.inotify.max_user_instances = 8192
+      fs.inotify.max_user_watches = 524288
 
 # Package management
 package_update: true
