@@ -141,6 +141,15 @@ spec:
           drop:
             - ALL
 
+      # Alloy WAL storage path - must be writable, uses emptyDir for ephemeral storage
+      storagePath: /tmp/alloy
+
+      # Mount the emptyDir so Alloy can write its WAL on a read-only root filesystem
+      mounts:
+        extra:
+          - name: alloy-storage
+            mountPath: /tmp/alloy
+
     # DaemonSet mode - run on every node
     controller:
       type: daemonset
@@ -148,6 +157,11 @@ spec:
       tolerations:
         - effect: NoSchedule
           operator: Exists
+      # Provide a writable emptyDir for Alloy's WAL storage
+      volumes:
+        extra:
+          - name: alloy-storage
+            emptyDir: {}
 
     # ServiceMonitor for Prometheus metrics
     serviceMonitor:
