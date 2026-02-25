@@ -5,7 +5,7 @@ locals {
 
 module "k3s_cluster" {
   source  = "app.terraform.io/maor/terraform-proxmox-k3s-cluster/proxmox"
-  version = "1.0.0"
+  version = "1.1.0"
 
   pve_node_name       = var.pve_node_name
   private_ssh_key     = var.private_ssh_key

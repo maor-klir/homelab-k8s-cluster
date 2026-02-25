@@ -5,6 +5,10 @@ resource "tls_private_key" "workload_identity_sa" {
 }
 
 locals {
+
+  # Extract the SHA256 checksum for the latest-noble-server-cloudimg-amd64.qcow2 cloud image
+  noble_amd64_checksum = regex("([a-f0-9]{64}) \\*noble-server-cloudimg-amd64\\.img", data.http.noble_sha256sums.response_body)[0]
+
   # Get the first control plane IP address
   control_plane_ip = "${var.base_ip_address}${var.vm_id_start}"
 
@@ -90,6 +94,20 @@ resource "proxmox_virtual_environment_file" "user_data" {
   }
 }
 
+# Download the latest Ubuntu Server Noble Numbat cloud image
+resource "proxmox_virtual_environment_download_file" "latest_noble_qcow2_img" {
+  for_each = local.nodes
+
+  content_type       = "import"
+  datastore_id       = "local"
+  node_name          = each.value.node_name
+  url                = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  file_name          = "latest-noble-server-cloudimg-amd64.qcow2"
+  checksum           = local.noble_amd64_checksum
+  checksum_algorithm = "sha256"
+  overwrite          = true
+}
+
 # Provision K3s VMs in Proxmox VE
 resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   for_each = local.nodes
@@ -135,7 +153,7 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
 
   disk {
     datastore_id = "local-lvm"
-    file_id      = "local:import/noble-server-cloudimg-amd64.qcow2"
+    file_id      = proxmox_virtual_environment_download_file.latest_noble_qcow2_img[each.key].id
     interface    = "scsi0"
     iothread     = true
     cache        = "writeback"
