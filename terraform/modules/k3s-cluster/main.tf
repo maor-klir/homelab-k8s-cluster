@@ -94,7 +94,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
   }
 }
 
-# Download the latest Ubuntu Server Noble Numbat cloud image
+# Download the latest Ubuntu Server Noble Numbat cloud image - intended only for bootstrapping the cluster
 resource "proxmox_virtual_environment_download_file" "latest_noble_qcow2_img" {
   for_each = local.nodes
 
@@ -177,9 +177,11 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
   }
 
   # cloud-init runs once on first boot - ignore user-data changes to prevent unnecessary VM replacements
+  # Also ignore changes to the disk file ID to prevent unnecessary VM replacements when the base image is updated
   lifecycle {
     ignore_changes = [
-      initialization[0].user_data_file_id
+      initialization[0].user_data_file_id,
+      disk[0].file_id
     ]
   }
 }
