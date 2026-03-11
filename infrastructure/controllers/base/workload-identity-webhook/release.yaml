@@ -22,3 +22,10 @@ spec:
     mode: enabled
   values:
     azureTenantID: "7a07eeec-fee1-4167-a709-209e4f54f334"
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 100m
+        memory: 20Mi
