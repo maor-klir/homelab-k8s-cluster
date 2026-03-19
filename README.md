@@ -55,8 +55,7 @@ Environments can be destroyed and recreated identically, eliminating configurati
 
 The K3s environment relies on infrastructure provisioning and management through HCP Terraform, cloud-init, and shell scripts.  
 Since all infrastructure is being provisioned on a Proxmox VE cluster that has no publicly accessible endpoint, i.e., an isolated private environment, an HCP Terraform agent must be present and running on the private network (I opted for a binary running on a small-sized VM).  
-General considerations and implementation specifics can be found at [docs/hcp-terraform-agents.md](docs/hcp-terraform-agents.md).  
-  A breakdown of all token types (agent tokens, Workload Identity Tokens, API tokens) and their usage characteristics can be found at [docs/hcp-terraform-token-usage.md](docs/hcp-terraform-token-usage.md).
+General considerations and implementation specifics can be found at [docs/hcp-terraform-agents.md](docs/hcp-terraform-agents.md).
 
 An overview of all the features I am utilizing:
 

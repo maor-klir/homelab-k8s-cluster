@@ -9,8 +9,6 @@ Tutorial: <https://developer.hashicorp.com/terraform/tutorials/cloud/cloud-agent
 
 **Note:** HCP Terraform Free Edition includes **one self-hosted agent**.
 
-For a detailed breakdown of all token types (agent tokens, Workload Identity Tokens, API tokens) and their usage characteristics, see [docs/hcp-terraform-token-usage.md](hcp-terraform-token-usage.md).
-
 ## General implementation guidelines
 
 ### Release archive checksum verification
