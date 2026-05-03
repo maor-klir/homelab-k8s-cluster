@@ -9,4 +9,4 @@ data:
   GUID: "1000"
   TZ: "Europe/Berlin"
   DB_ENGINE: "sqlite"
-  BASE_URL: https://mealie.cloudandklir.com
+  BASE_URL: "https://mealie-qa.cloudandklir.com"
