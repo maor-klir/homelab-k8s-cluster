@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mealie-configmap
+data:
+  ALLOW_SIGNUP: "false"
+  LOG_LEVEL: "DEBUG"
+  PUID: 1000
+  GUID: 1000
+  TZ: "Europe/Berlin"
+  DB_ENGINE: "sqlite"
+  BASE_URL: https://mealie.cloudandklir.com

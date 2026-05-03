@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mealie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mealie
+  template:
+    metadata:
+      labels:
+        app: mealie
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      restartPolicy: Always
+      containers:
+        - name: mealie
+          image: ghcr.io/mealie-recipes/mealie:v3.16.0
+          securityContext:
+            allowPrivilegeEscalation: false
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1500m
+              memory: 1Gi
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          volumeMounts:
+            - name: mealie-data
+              mountPath: /app/data
+          envFrom:
+            - configMapRef:
+                name: mealie-configmap
+      volumes:
+        - name: mealie-data
+          persistentVolumeClaim:
+            claimName: mealie-data-pvc
