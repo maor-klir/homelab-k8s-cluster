@@ -6,18 +6,18 @@ A Terraform module that provisions a K3S Kubernetes cluster on Proxmox Virtual E
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.10.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | ~> 3.5 |
-| <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | ~> 0.97 |
+| <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | ~> 0.98 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_http"></a> [http](#provider\_http) | ~> 3.5 |
-| <a name="provider_proxmox"></a> [proxmox](#provider\_proxmox) | 0.97.0 |
+| ---- | ------- |
+| <a name="provider_http"></a> [http](#provider\_http) | 3.5.0 |
+| <a name="provider_proxmox"></a> [proxmox](#provider\_proxmox) | 0.105.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.2.1 |
 
 ## Modules
@@ -27,8 +27,8 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
-| [proxmox_virtual_environment_download_file.latest_noble_qcow2_img](https://registry.terraform.io/providers/bpg/proxmox/latest/docs/resources/virtual_environment_download_file) | resource |
+| ---- | ---- |
+| [proxmox_download_file.latest_noble_qcow2_img](https://registry.terraform.io/providers/bpg/proxmox/latest/docs/resources/download_file) | resource |
 | [proxmox_virtual_environment_file.user_data](https://registry.terraform.io/providers/bpg/proxmox/latest/docs/resources/virtual_environment_file) | resource |
 | [proxmox_virtual_environment_vm.k3s_nodes](https://registry.terraform.io/providers/bpg/proxmox/latest/docs/resources/virtual_environment_vm) | resource |
 | [tls_private_key.workload_identity_sa](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
@@ -37,7 +37,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name (qa, prod) | `string` | n/a | yes |
 | <a name="input_k3s_public_key"></a> [k3s\_public\_key](#input\_k3s\_public\_key) | K3s user public key | `string` | n/a | yes |
 | <a name="input_k3s_token"></a> [k3s\_token](#input\_k3s\_token) | K3s cluster token for joining nodes | `string` | n/a | yes |
@@ -64,7 +64,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_k3s_nodes"></a> [k3s\_nodes](#output\_k3s\_nodes) | Map of all node details |
 | <a name="output_workload_identity_public_key_pem"></a> [workload\_identity\_public\_key\_pem](#output\_workload\_identity\_public\_key\_pem) | Workload identity service account public key in PEM format for JWKS generation |
 <!-- END_TF_DOCS -->

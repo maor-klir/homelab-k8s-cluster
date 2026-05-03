@@ -95,7 +95,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
 }
 
 # Download the latest Ubuntu Server Noble Numbat cloud image - intended only for bootstrapping the cluster
-resource "proxmox_virtual_environment_download_file" "latest_noble_qcow2_img" {
+resource "proxmox_download_file" "latest_noble_qcow2_img" {
   for_each = local.nodes
 
   content_type       = "import"
@@ -153,7 +153,7 @@ resource "proxmox_virtual_environment_vm" "k3s_nodes" {
 
   disk {
     datastore_id = "local-lvm"
-    file_id      = proxmox_virtual_environment_download_file.latest_noble_qcow2_img[each.key].id
+    file_id      = proxmox_download_file.latest_noble_qcow2_img[each.key].id
     interface    = "scsi0"
     iothread     = true
     cache        = "writeback"
