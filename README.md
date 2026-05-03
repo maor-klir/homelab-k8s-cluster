@@ -108,6 +108,7 @@ Architecture details, data flow, and design rationale specifics are available at
 
 - [linkding](https://github.com/sissbruecker/linkding) - a self-hosted bookmark manager that is designed to be minimal, fast, and easy to set up
 - [Audiobookshelf](https://github.com/advplyr/audiobookshelf) - a self-hosted audiobook and podcast server
+- [Mealie] (https://docs.mealie.io/) - a self-hosted recipe manager and meal planner 
 
 ## 🗺️ Current Environments
 
