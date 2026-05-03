@@ -1,0 +1,3 @@
+[allowlist]
+  description = "Allowlist for Azure Key Vault secret name references in ExternalSecret manifests"
+  paths = ['''cloudflare-tunnel-credentials\.yaml$''']
