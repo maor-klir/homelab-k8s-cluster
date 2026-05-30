@@ -19,7 +19,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: mealie
-          image: ghcr.io/mealie-recipes/mealie:v3.18.0
+          image: ghcr.io/mealie-recipes/mealie:v3.19.2
           securityContext:
             allowPrivilegeEscalation: false
           resources:
