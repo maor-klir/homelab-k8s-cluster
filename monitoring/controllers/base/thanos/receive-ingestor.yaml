@@ -56,7 +56,7 @@ spec:
         runAsUser: 65534
       containers:
         - name: thanos
-          image: quay.io/thanos/thanos:v0.42.0
+          image: quay.io/thanos/thanos:v0.42.4
           imagePullPolicy: IfNotPresent
           args:
             - receive
